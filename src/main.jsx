@@ -1,25 +1,42 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowUpRight,
+  BarChart3,
   Bot,
+  ChevronDown,
   Check,
+  Coins,
   Copy,
+  CreditCard,
+  Crown,
   Eye,
   Github,
   ImageIcon,
   LoaderCircle,
+  LogIn,
+  LogOut,
   PackageCheck,
+  RefreshCw,
+  ReceiptText,
   Search,
+  Settings,
+  ShieldCheck,
   Sparkles,
   Terminal,
+  TrendingUp,
+  UserCircle,
+  UserPlus,
+  Users,
   WandSparkles,
   X
 } from 'lucide-react';
 import './styles.css';
+import { isSupabaseConfigured, supabase } from './supabaseClient';
 import skillExampleImage from '../agents/skills/gpt-image-2-style-library/assets/city-life-system-map.png';
 
 const fallbackRepoUrl = 'https://github.com/freestylefly/awesome-gpt-image-2';
+const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 const copy = {
   en: {
@@ -76,12 +93,122 @@ const copy = {
     generating: 'Generating...',
     editablePrompt: 'Editable Prompt',
     generatedResult: 'Generated Result',
+    originalImage: 'Original Image',
+    savedInBrowser: 'Saved in this browser',
     resetPrompt: 'Reset Prompt',
     oneFreeGeneration: '1 free test image',
-    freeLimitReached: 'Free generation used. Credits are coming soon.',
+    superAdminGeneration: 'Super admin mode: every generation costs 1 credit.',
+    generationCost: 'Costs 1 credit',
+    freeLimitReached: 'Free generation used. Buy credits or start a membership to keep generating.',
+    creditsRequired: 'Credits required. Buy credits or start a membership to keep generating.',
+    generationBusy: 'The image service is busy. Please try again in a moment.',
     generationFailed: 'Generation failed. Please try again later.',
     promptRequired: 'Prompt is required and must stay under 6000 characters.',
     serverUnavailable: 'Generation service is not configured yet.',
+    checkoutUnavailable: 'Checkout is not configured yet.',
+    checkoutFailed: 'Checkout failed. Please try again later.',
+    billingSuccess: 'Payment is processing. Credits will appear after Stripe confirms it.',
+    billingCancelled: 'Checkout cancelled. You can choose another pack anytime.',
+    authRequired: 'Sign in to generate a test image.',
+    signIn: 'Sign in',
+    signInTitle: 'Sign in to generate test images',
+    signInSubtitle: 'Use your Google account to unlock image generation, credits, and membership features.',
+    authRateLimited: 'Too many login attempts. Please wait a bit, then try Google sign-in again.',
+    googleNotConfigured: 'Google sign-in is not enabled yet.',
+    continueWithGoogle: 'Continue with Google',
+    authNotConfigured: 'Login is not configured yet.',
+    authError: 'Login failed. Please try again.',
+    signOut: 'Sign out',
+    account: 'Account',
+    accountSettings: 'Account settings',
+    accountTitle: 'Account settings',
+    accountSubtitle: 'Manage your public display name, membership status, and GPT-Image2 credit usage.',
+    displayName: 'Display name',
+    saveProfile: 'Save profile',
+    profileSaved: 'Profile saved.',
+    profileUpdateFailed: 'Profile update failed. Please try again.',
+    googleAvatarSource: 'Avatar is synced from your Google account.',
+    accountOverview: 'Account overview',
+    totalGenerations: 'Generated tests',
+    totalGenerationCredits: 'Credits spent',
+    generationUsage: 'Generation spending',
+    openCase: 'View case',
+    sourceCase: 'Source case',
+    noGenerationTransactions: 'No generation spending yet.',
+    adminPanel: 'Admin',
+    membershipCenter: 'Membership & Credits',
+    superAdmin: 'Super admin',
+    credits: 'credits',
+    buyCredits: 'Buy credits',
+    subscribe: 'Subscribe',
+    manageSubscription: 'Manage subscription',
+    currentPlan: 'Current plan',
+    noPlan: 'Free plan',
+    activeUntil: 'Active until',
+    membershipPlans: 'Membership',
+    creditPacks: 'Credit packs',
+    monthlyCredits: (count) => `${count} credits / month`,
+    packCredits: (count) => `${count} credits`,
+    billingTitle: 'Membership & credits',
+    billingSubtitle: 'Members get monthly credits. Credit packs can be added anytime for more GPT-Image2 tests.',
+    balanceTitle: 'Current balance',
+    transactionHistory: 'Credit history',
+    noTransactions: 'No credit history yet.',
+    loadBilling: 'Loading billing...',
+    openBilling: 'Open membership center',
+    paymentReady: 'Secure checkout via Stripe.',
+    billingNotReady: 'Stripe checkout is not configured yet.',
+    adminAdjust: 'Adjust credits',
+    creditAmount: 'Amount',
+    reason: 'Reason',
+    applyAdjustment: 'Apply adjustment',
+    freeReady: 'Free test ready',
+    freeUsedShort: 'Free test used',
+    signInToGenerate: 'Sign in to generate',
+    creditsAvailable: (count) => `${count} credit${count === 1 ? '' : 's'} available`,
+    adminTitle: 'User admin',
+    adminSubtitle: 'Traffic, users, memberships, credits, and generation activity in one dashboard.',
+    adminMetrics: 'Dashboard',
+    trafficMetrics: 'Traffic',
+    businessMetrics: 'Business',
+    analyticsNotConfigured: 'GA4 is not configured yet. Business metrics are still available.',
+    analyticsLoadFailed: 'GA4 data could not be loaded. Business metrics are still available.',
+    range7d: '7 days',
+    range30d: '30 days',
+    pv: 'PV',
+    uv: 'UV',
+    sessions: 'Sessions',
+    newUsers: 'New users',
+    registeredUsers: 'Registered users',
+    newRegistrations: 'New registrations',
+    activeMemberships: 'Active members',
+    totalGenerationsMetric: 'Total generations',
+    rangeGenerations: 'Range generations',
+    succeeded: 'Succeeded',
+    failed: 'Failed',
+    pending: 'Pending',
+    creditsConsumed: 'Credits consumed',
+    creditsInCirculation: 'Credits in balances',
+    purchasedCredits: 'Purchased credits',
+    membershipCredits: 'Membership credits',
+    dailyTraffic: 'Daily traffic',
+    topPages: 'Top pages',
+    channels: 'Channels',
+    countries: 'Countries',
+    pageViews: 'Views',
+    noAnalyticsRows: 'No analytics rows yet.',
+    refresh: 'Refresh',
+    users: 'Users',
+    role: 'Role',
+    creditBalance: 'Credits',
+    freeGeneration: 'Free test',
+    spentCredits: 'Spent',
+    purchased: 'Purchased',
+    lastGeneration: 'Last generation',
+    createdAt: 'Created',
+    loadingUsers: 'Loading users...',
+    noUsers: 'No users yet.',
+    adminOnly: 'Only super admins can view this page.',
     fullPrompt: 'Full Prompt',
     templatePrompt: 'Template Prompt',
     useWhen: 'Use When',
@@ -146,12 +273,122 @@ const copy = {
     generating: '生成中...',
     editablePrompt: '可编辑 Prompt',
     generatedResult: '生成结果',
+    originalImage: '原图',
+    savedInBrowser: '已保存到本浏览器',
     resetPrompt: '重置 Prompt',
     oneFreeGeneration: '免费生成 1 张测试图',
-    freeLimitReached: '免费额度已用完，积分购买即将开放。',
+    superAdminGeneration: '超级管理员模式：每次生图消耗 1 积分。',
+    generationCost: '本次消耗 1 积分',
+    freeLimitReached: '免费额度已用完，可购买积分包或开通会员继续生成。',
+    creditsRequired: '积分不足，可购买积分包或开通会员继续生成。',
+    generationBusy: '生图服务繁忙，请稍后再试。',
     generationFailed: '生成失败，请稍后再试。',
     promptRequired: 'Prompt 不能为空，并且不能超过 6000 字符。',
     serverUnavailable: '生成服务还没有完成配置。',
+    checkoutUnavailable: '支付功能还没有完成配置。',
+    checkoutFailed: '创建支付失败，请稍后再试。',
+    billingSuccess: '支付正在处理中，Stripe 确认后积分会自动到账。',
+    billingCancelled: '已取消支付，你可以随时换一个积分包或会员方案。',
+    authRequired: '登录后即可生成测试图。',
+    signIn: '登录',
+    signInTitle: '登录后生成测试图',
+    signInSubtitle: '使用你的 Google 账号登录，解锁生图测试、积分和会员能力。',
+    authRateLimited: '登录尝试过于频繁，请稍后再使用 Google 登录。',
+    googleNotConfigured: 'Google 登录还没有启用。',
+    continueWithGoogle: '使用 Google 登录',
+    authNotConfigured: '登录功能还没有完成配置。',
+    authError: '登录失败，请稍后再试。',
+    signOut: '退出登录',
+    account: '账号',
+    accountSettings: '账户设置',
+    accountTitle: '账户设置',
+    accountSubtitle: '管理你的显示名称、会员状态和 GPT-Image2 积分消耗。',
+    displayName: '显示名称',
+    saveProfile: '保存资料',
+    profileSaved: '资料已保存。',
+    profileUpdateFailed: '资料保存失败，请稍后再试。',
+    googleAvatarSource: '头像会同步你的 Google 账号头像。',
+    accountOverview: '账户概览',
+    totalGenerations: '生成测试数',
+    totalGenerationCredits: '已消耗积分',
+    generationUsage: '生图消耗记录',
+    openCase: '查看案例',
+    sourceCase: '关联案例',
+    noGenerationTransactions: '暂无生图消耗记录。',
+    adminPanel: '管理后台',
+    membershipCenter: '会员与积分',
+    superAdmin: '超级管理员',
+    credits: '积分',
+    buyCredits: '购买积分',
+    subscribe: '开通会员',
+    manageSubscription: '管理订阅',
+    currentPlan: '当前会员',
+    noPlan: '免费用户',
+    activeUntil: '有效期至',
+    membershipPlans: '会员套餐',
+    creditPacks: '积分包',
+    monthlyCredits: (count) => `每月 ${count} 积分`,
+    packCredits: (count) => `${count} 积分`,
+    billingTitle: '会员与积分',
+    billingSubtitle: '会员每月自动获得积分，也可以随时购买积分包，用来测试更多 GPT-Image2 案例。',
+    balanceTitle: '当前余额',
+    transactionHistory: '积分流水',
+    noTransactions: '暂无积分流水。',
+    loadBilling: '正在加载会员与积分...',
+    openBilling: '打开会员中心',
+    paymentReady: '使用 Stripe 安全支付。',
+    billingNotReady: 'Stripe 支付还没有完成配置。',
+    adminAdjust: '调整积分',
+    creditAmount: '数量',
+    reason: '原因',
+    applyAdjustment: '确认调整',
+    freeReady: '免费测试可用',
+    freeUsedShort: '免费测试已用',
+    signInToGenerate: '登录后生成',
+    creditsAvailable: (count) => `可用积分 ${count}`,
+    adminTitle: '用户管理',
+    adminSubtitle: '统一查看流量、用户、会员、积分和生图活跃情况。',
+    adminMetrics: '数据看板',
+    trafficMetrics: '流量数据',
+    businessMetrics: '业务数据',
+    analyticsNotConfigured: 'GA4 还没有配置，当前先展示业务数据。',
+    analyticsLoadFailed: 'GA4 数据暂时读取失败，当前先展示业务数据。',
+    range7d: '近 7 天',
+    range30d: '近 30 天',
+    pv: 'PV',
+    uv: 'UV',
+    sessions: 'Sessions',
+    newUsers: '新访客',
+    registeredUsers: '注册用户',
+    newRegistrations: '新增注册',
+    activeMemberships: '活跃会员',
+    totalGenerationsMetric: '总生图量',
+    rangeGenerations: '区间生图量',
+    succeeded: '成功',
+    failed: '失败',
+    pending: '进行中',
+    creditsConsumed: '已消耗积分',
+    creditsInCirculation: '账户积分余额',
+    purchasedCredits: '购买积分',
+    membershipCredits: '会员发放积分',
+    dailyTraffic: '每日流量',
+    topPages: '热门页面',
+    channels: '来源渠道',
+    countries: '国家/地区',
+    pageViews: '浏览量',
+    noAnalyticsRows: '暂无统计数据。',
+    refresh: '刷新',
+    users: '用户',
+    role: '角色',
+    creditBalance: '积分',
+    freeGeneration: '免费测试',
+    spentCredits: '消耗',
+    purchased: '购买',
+    lastGeneration: '最近生图',
+    createdAt: '创建时间',
+    loadingUsers: '正在加载用户...',
+    noUsers: '暂无用户。',
+    adminOnly: '仅超级管理员可查看。',
     fullPrompt: '完整 Prompt',
     templatePrompt: '模板 Prompt',
     useWhen: '适用场景',
@@ -228,6 +465,124 @@ function compactText(value, maxLength = 180) {
   return `${value.slice(0, maxLength)}...`;
 }
 
+const GENERATED_TESTS_STORAGE_KEY = 'gpt-image-2-generated-tests:v1';
+const MAX_SAVED_GENERATIONS = 12;
+const HERO_CASE_COUNT = 5;
+const HOT_STRIP_CASE_COUNT = 8;
+
+function pagePathWithHash() {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
+function sendGaPageView() {
+  if (!gaMeasurementId || typeof window.gtag !== 'function') return;
+  window.gtag('event', 'page_view', {
+    page_title: document.title,
+    page_location: window.location.href,
+    page_path: pagePathWithHash()
+  });
+}
+
+function useGaPageViews() {
+  useEffect(() => {
+    if (!gaMeasurementId) return undefined;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag() {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag('js', new Date());
+    window.gtag('config', gaMeasurementId, { send_page_view: false });
+
+    const existingScript = document.querySelector(`script[data-ga4="${gaMeasurementId}"]`);
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`;
+      script.dataset.ga4 = gaMeasurementId;
+      document.head.appendChild(script);
+    }
+
+    sendGaPageView();
+    window.addEventListener('hashchange', sendGaPageView);
+    window.addEventListener('popstate', sendGaPageView);
+    return () => {
+      window.removeEventListener('hashchange', sendGaPageView);
+      window.removeEventListener('popstate', sendGaPageView);
+    };
+  }, []);
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat('en-US').format(Number(value || 0));
+}
+
+function formatShortDate(value, language) {
+  if (!value) return '-';
+  const normalized = /^\d{8}$/.test(String(value))
+    ? `${String(value).slice(0, 4)}-${String(value).slice(4, 6)}-${String(value).slice(6, 8)}T00:00:00Z`
+    : value;
+  return new Date(normalized).toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US', {
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+function percentOf(value, max) {
+  if (!max) return 0;
+  return Math.max(4, Math.round((Number(value || 0) / max) * 100));
+}
+
+function readSavedGenerations() {
+  try {
+    return JSON.parse(localStorage.getItem(GENERATED_TESTS_STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function getSavedGeneration(caseId) {
+  const saved = readSavedGenerations()[String(caseId)];
+  return saved?.image ? saved : null;
+}
+
+function saveGeneratedTest(caseId, entry) {
+  const key = String(caseId);
+  const saved = readSavedGenerations();
+  saved[key] = entry;
+
+  const latestEntries = Object.entries(saved)
+    .filter(([, value]) => value?.image)
+    .sort(([, a], [, b]) => new Date(b.savedAt || 0) - new Date(a.savedAt || 0))
+    .slice(0, MAX_SAVED_GENERATIONS);
+
+  try {
+    localStorage.setItem(GENERATED_TESTS_STORAGE_KEY, JSON.stringify(Object.fromEntries(latestEntries)));
+  } catch {
+    const compactEntries = latestEntries.slice(0, Math.max(1, Math.floor(MAX_SAVED_GENERATIONS / 2)));
+    try {
+      localStorage.setItem(GENERATED_TESTS_STORAGE_KEY, JSON.stringify(Object.fromEntries(compactEntries)));
+    } catch {
+      // Browser storage can be full or blocked. The generated image still stays
+      // visible for the current dialog state when persistence is unavailable.
+    }
+  }
+}
+
+function takeDistinctCases(cases, count, excludedIds = new Set()) {
+  const picked = [];
+  const seenIds = new Set(excludedIds);
+
+  for (const caseItem of cases) {
+    if (seenIds.has(caseItem.id)) continue;
+    picked.push(caseItem);
+    seenIds.add(caseItem.id);
+    if (picked.length === count) break;
+  }
+
+  return picked;
+}
+
 function localizeLabel(value, language, styleLibrary) {
   const libraryItems = [
     ...(styleLibrary?.categories || []),
@@ -296,9 +651,98 @@ function useCopy() {
 function generationErrorMessage(error, language) {
   const t = copy[language];
   if (error === 'FREE_LIMIT_REACHED') return t.freeLimitReached;
+  if (error === 'CREDITS_REQUIRED') return t.creditsRequired;
+  if (error === 'AUTH_REQUIRED') return t.authRequired;
+  if (error === 'FORBIDDEN') return t.adminOnly;
+  if (error === 'UPSTREAM_BUSY') return t.generationBusy;
   if (error === 'SERVER_NOT_CONFIGURED') return t.serverUnavailable;
+  if (error === 'BILLING_NOT_CONFIGURED') return t.checkoutUnavailable;
+  if (error === 'CHECKOUT_FAILED' || error === 'BILLING_PORTAL_FAILED') return t.checkoutFailed;
   if (error === 'INVALID_PROMPT') return t.promptRequired;
   return t.generationFailed;
+}
+
+function getAuthHeaders(session) {
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+}
+
+function getGenerationQuotaText(profile, language) {
+  const t = copy[language];
+  if (!profile) return t.authRequired;
+  if (profile.isSuperAdmin) {
+    return profile.creditBalance > 0 ? `${t.superAdminGeneration} ${t.creditsAvailable(profile.creditBalance)}` : t.creditsRequired;
+  }
+  if (!profile.freeUsed) return t.oneFreeGeneration;
+  if (profile.creditBalance > 0) return t.creditsAvailable(profile.creditBalance);
+  return t.creditsRequired;
+}
+
+function productText(value, language) {
+  if (!value) return '';
+  return value[language] || value.en || value.zh || '';
+}
+
+function formatMembershipStatus(membership, language) {
+  const t = copy[language];
+  if (!membership?.isActive) return t.noPlan;
+  const status = membership.status === 'trialing' ? 'trialing' : 'active';
+  if (!membership.currentPeriodEnd) return status;
+  const date = new Date(membership.currentPeriodEnd).toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US');
+  return `${status} · ${t.activeUntil} ${date}`;
+}
+
+function transactionLabel(transaction, language) {
+  const typeMap = {
+    grant: language === 'zh' ? '赠送' : 'Grant',
+    purchase: language === 'zh' ? '购买' : 'Purchase',
+    membership_grant: language === 'zh' ? '会员发放' : 'Membership grant',
+    generation: language === 'zh' ? '生图消耗' : 'Generation',
+    refund: language === 'zh' ? '失败返还' : 'Refund',
+    adjustment: language === 'zh' ? '管理员调整' : 'Admin adjustment'
+  };
+  return typeMap[transaction.type] || transaction.type || '-';
+}
+
+function transactionCaseId(transaction) {
+  const rawCaseId = transaction?.caseId || transaction?.metadata?.caseId;
+  const caseId = Number(rawCaseId);
+  return Number.isFinite(caseId) && caseId > 0 ? caseId : null;
+}
+
+function TransactionItem({ transaction, language, casesById, onOpenCase }) {
+  const t = copy[language];
+  const caseId = transactionCaseId(transaction);
+  const caseItem = caseId ? casesById?.get(caseId) : null;
+  const caseLabel = caseItem
+    ? `${t.openCase} #${caseId} · ${compactText(caseItem.title, 28)}`
+    : `${t.sourceCase} #${caseId}`;
+
+  return (
+    <div className={cx('transactionItem', caseId && 'hasCase')}>
+      <div className="transactionInfo">
+        <span>{transactionLabel(transaction, language)}</span>
+        {caseId ? (
+          <button
+            className="transactionCaseLink"
+            type="button"
+            onClick={() => caseItem && onOpenCase?.(caseItem)}
+            disabled={!caseItem}
+          >
+            <ImageIcon size={14} />
+            {caseLabel}
+          </button>
+        ) : null}
+      </div>
+      <strong className={transaction.amount >= 0 ? 'positive' : 'negative'}>
+        {transaction.amount >= 0 ? '+' : ''}{transaction.amount}
+      </strong>
+      <em>
+        {transaction.createdAt
+          ? new Date(transaction.createdAt).toLocaleString(language === 'zh' ? 'zh-CN' : 'en-US')
+          : '-'}
+      </em>
+    </div>
+  );
 }
 
 function formatTemplatePrompt(item, language, styleLibrary) {
@@ -360,7 +804,7 @@ function formatTemplatePrompt(item, language, styleLibrary) {
   ].join('\n');
 }
 
-function Hero({ latestCases, language, repoUrl, totalCases, categoryCount }) {
+function Hero({ latestCases, language, repoUrl, totalCases, categoryCount, onOpenCase }) {
   const t = copy[language];
 
   return (
@@ -393,16 +837,16 @@ function Hero({ latestCases, language, repoUrl, totalCases, categoryCount }) {
       </div>
       <div className="heroDeck" aria-label="Latest GPT-Image2 cases">
         {latestCases.slice(0, 5).map((caseItem, index) => (
-          <a
+          <button
             className={`heroCard heroCard${index + 1}`}
-            href={caseItem.githubUrl}
-            target="_blank"
-            rel="noreferrer"
+            type="button"
+            aria-label={`${language === 'zh' ? '打开案例' : 'Open case'} ${caseItem.id}: ${caseItem.title}`}
+            onClick={() => onOpenCase(caseItem)}
             key={caseItem.id}
           >
             <img src={caseItem.image} alt={caseItem.imageAlt} />
             <span>{language === 'zh' ? '案例' : 'Case'} {caseItem.id}</span>
-          </a>
+          </button>
         ))}
       </div>
     </section>
@@ -417,23 +861,1111 @@ function FilterPill({ active, children, onClick }) {
   );
 }
 
+function useDropdownDismiss(open, setOpen) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    function handlePointerDown(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, setOpen]);
+
+  return ref;
+}
+
 function LanguageSwitch({ language, setLanguage }) {
+  const [open, setOpen] = useState(false);
+  const ref = useDropdownDismiss(open, setOpen);
+  const languageOptions = [
+    { value: 'en', label: 'English', short: 'EN' },
+    { value: 'zh', label: '中文', short: '中文' }
+  ];
+  const activeLanguage = languageOptions.find((option) => option.value === language) || languageOptions[0];
+
   return (
-    <div className="languageSwitch" aria-label="Language switcher">
+    <div className="dropdownControl languageSwitch" ref={ref}>
       <button
-        className={cx(language === 'en' && 'active')}
+        className={cx('dropdownTrigger', open && 'open')}
         type="button"
-        onClick={() => setLanguage('en')}
+        aria-label="Language"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
       >
-        EN
+        <span>{activeLanguage.short}</span>
+        <ChevronDown size={15} />
       </button>
+      {open ? (
+        <div className="dropdownMenu languageMenu" role="menu">
+          {languageOptions.map((option) => (
+            <button
+              className={cx(option.value === language && 'active')}
+              type="button"
+              role="menuitemradio"
+              aria-checked={option.value === language}
+              onClick={() => {
+                setLanguage(option.value);
+                setOpen(false);
+              }}
+              key={option.value}
+            >
+              <span>{option.label}</span>
+              <strong>{option.short}</strong>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function authErrorMessage(error, language) {
+  const t = copy[language];
+  const message = String(error?.message || error || '').trim();
+  const normalized = message.toLowerCase();
+
+  if (error?.status === 429 || normalized.includes('rate limit') || normalized.includes('too many')) {
+    return t.authRateLimited;
+  }
+
+  if (normalized.includes('provider') || normalized.includes('oauth')) {
+    return t.googleNotConfigured;
+  }
+
+  return message || t.authError;
+}
+
+function GoogleIcon() {
+  return (
+    <svg className="googleIcon" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.25h2.91c1.7-1.57 2.69-3.89 2.69-6.6z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.25c-.8.54-1.83.86-3.05.86-2.35 0-4.34-1.58-5.05-3.71H.94v2.33A9 9 0 0 0 9 18z" />
+      <path fill="#FBBC05" d="M3.95 10.72A5.41 5.41 0 0 1 3.67 9c0-.6.1-1.18.28-1.72V4.95H.94A9 9 0 0 0 0 9c0 1.45.34 2.82.94 4.05l3.01-2.33z" />
+      <path fill="#EA4335" d="M9 3.57c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .94 4.95l3.01 2.33C4.66 5.15 6.65 3.57 9 3.57z" />
+    </svg>
+  );
+}
+
+function AuthModal({ open, language, onClose }) {
+  const t = copy[language];
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    setStatus('idle');
+    setMessage('');
+  }, [open]);
+
+  if (!open) return null;
+
+  const redirectTo = `${window.location.origin}${window.location.pathname}`;
+
+  async function handleGoogleSignIn() {
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus('error');
+      setMessage(t.authNotConfigured);
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('');
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo
+      }
+    });
+
+    if (error) {
+      setStatus('error');
+      setMessage(authErrorMessage(error, language));
+    }
+  }
+
+  return (
+    <div
+      className="previewOverlay authOverlay"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section className="authDialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button className="previewClose" type="button" onClick={onClose} aria-label={t.closePreview}>
+          <X size={20} />
+        </button>
+        <div className="authIcon">
+          <UserCircle size={28} />
+        </div>
+        <h2 id="auth-title">{t.signInTitle}</h2>
+        <p>{t.signInSubtitle}</p>
+        <button className="googleButton" type="button" onClick={handleGoogleSignIn} disabled={status === 'loading'}>
+          {status === 'loading' ? <LoaderCircle className="spinIcon" size={18} /> : <GoogleIcon />}
+          {t.continueWithGoogle}
+        </button>
+        {message ? (
+          <p className={cx('authMessage', status === 'error' && 'error', status === 'sent' && 'sent')}>
+            {message}
+          </p>
+        ) : null}
+      </section>
+    </div>
+  );
+}
+
+function UserMenu({ language, session, profile, onSignIn, onSignOut, onAdmin, onBilling, onAccount }) {
+  const t = copy[language];
+  const [open, setOpen] = useState(false);
+  const ref = useDropdownDismiss(open, setOpen);
+
+  if (!session) {
+    return (
+      <button className="accountButton" type="button" onClick={onSignIn}>
+        <LogIn size={17} />
+        <span>{t.signIn}</span>
+      </button>
+    );
+  }
+
+  const email = profile?.email || session.user?.email || t.account;
+  const displayName = profile?.fullName || session.user?.user_metadata?.name || email;
+  const avatarUrl = profile?.avatarUrl || session.user?.user_metadata?.avatar_url || session.user?.user_metadata?.picture || '';
+  const totalSpent = Number(profile?.usage?.totalGenerationCredits || 0);
+
+  return (
+    <div className="dropdownControl userMenu" ref={ref}>
       <button
-        className={cx(language === 'zh' && 'active')}
+        className={cx('userTrigger', open && 'open')}
         type="button"
-        onClick={() => setLanguage('zh')}
+        aria-label={t.account}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
       >
-        中文
+        <span className="avatarBadge">
+          {avatarUrl ? <img src={avatarUrl} alt="" /> : <UserCircle size={18} />}
+        </span>
+        <ChevronDown size={15} />
       </button>
+      {open ? (
+        <div className="dropdownMenu userDropdown" role="menu">
+          <div className="userSummary">
+            {avatarUrl ? <img className="userSummaryAvatar" src={avatarUrl} alt="" /> : <UserCircle size={32} />}
+            <div>
+              <strong>{displayName}</strong>
+              <span>{email}</span>
+            </div>
+          </div>
+          <div className="userStats">
+            {profile?.isSuperAdmin ? (
+              <span className="userStat admin">
+                <ShieldCheck size={15} />
+                {t.superAdmin}
+              </span>
+            ) : null}
+            <span className="userStat">
+              <Coins size={15} />
+              {profile?.creditBalance || 0} {t.credits}
+            </span>
+            <span className="userStat">
+              <Crown size={15} />
+              {formatMembershipStatus(profile?.membership, language)}
+            </span>
+            <span className="userStat">
+              <ReceiptText size={15} />
+              {t.totalGenerationCredits}: {totalSpent}
+            </span>
+          </div>
+          <div className="dropdownDivider" />
+          <button
+            className="dropdownAction"
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onAccount();
+            }}
+          >
+            <Settings size={17} />
+            {t.accountSettings}
+          </button>
+          <button
+            className="dropdownAction"
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onBilling();
+            }}
+          >
+            <CreditCard size={17} />
+            {t.membershipCenter}
+          </button>
+          {profile?.isSuperAdmin ? (
+            <button
+              className="dropdownAction"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                onAdmin();
+              }}
+            >
+              <ShieldCheck size={17} />
+              {t.adminPanel}
+            </button>
+          ) : null}
+          <button
+            className="dropdownAction danger"
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onSignOut();
+            }}
+          >
+            <LogOut size={17} />
+            {t.signOut}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function AccountPanel({
+  open,
+  language,
+  session,
+  profile,
+  casesById,
+  onClose,
+  onBilling,
+  onProfileChange,
+  onOpenCase
+}) {
+  const t = copy[language];
+  const [fullName, setFullName] = useState('');
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    setFullName(profile?.fullName || session?.user?.user_metadata?.name || '');
+    setStatus('idle');
+    setMessage('');
+  }, [open, profile?.fullName, session?.user?.user_metadata?.name]);
+
+  if (!open) return null;
+
+  const email = profile?.email || session?.user?.email || '';
+  const avatarUrl = profile?.avatarUrl || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture || '';
+  const usage = profile?.usage || {};
+  const recentTransactions = profile?.recentTransactions || [];
+  const generationTransactions = recentTransactions.filter((transaction) => transaction.type === 'generation');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const nextName = fullName.trim();
+    if (!nextName) {
+      setStatus('error');
+      setMessage(t.profileUpdateFailed);
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('');
+    try {
+      const response = await fetch('/api/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(session)
+        },
+        body: JSON.stringify({ fullName: nextName })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || 'PROFILE_UPDATE_FAILED');
+      }
+      if (payload.user) onProfileChange(payload.user);
+      setStatus('success');
+      setMessage(t.profileSaved);
+    } catch {
+      setStatus('error');
+      setMessage(t.profileUpdateFailed);
+    }
+  }
+
+  return (
+    <div
+      className="previewOverlay accountOverlay"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section className="accountDialog" role="dialog" aria-modal="true" aria-labelledby="account-title">
+        <button className="previewClose" type="button" onClick={onClose} aria-label={t.closePreview}>
+          <X size={20} />
+        </button>
+        <div className="accountHeader">
+          <div className="accountAvatar">
+            {avatarUrl ? <img src={avatarUrl} alt="" /> : <UserCircle size={44} />}
+          </div>
+          <div>
+            <span className="eyebrow">
+              <Settings size={16} />
+              {t.accountSettings}
+            </span>
+            <h2 id="account-title">{t.accountTitle}</h2>
+            <p>{t.accountSubtitle}</p>
+          </div>
+        </div>
+
+        <div className="accountGrid">
+          <form className="accountForm" onSubmit={handleSubmit}>
+            <label>
+              <span>{t.displayName}</span>
+              <input
+                value={fullName}
+                maxLength={80}
+                onChange={(event) => setFullName(event.target.value)}
+              />
+            </label>
+            <div className="accountEmail">
+              <span>{t.account}</span>
+              <strong>{email}</strong>
+              <em>{t.googleAvatarSource}</em>
+            </div>
+            <button type="submit" disabled={status === 'loading'}>
+              {status === 'loading' ? <LoaderCircle className="spinIcon" size={16} /> : <Check size={16} />}
+              {t.saveProfile}
+            </button>
+            {message ? (
+              <p className={cx('authMessage', status === 'error' && 'error', status === 'success' && 'sent')}>
+                {message}
+              </p>
+            ) : null}
+          </form>
+
+          <section className="accountOverview">
+            <h3>{t.accountOverview}</h3>
+            <div className="accountMetrics">
+              <div>
+                <span>{t.creditBalance}</span>
+                <strong>{profile?.creditBalance || 0}</strong>
+              </div>
+              <div>
+                <span>{t.currentPlan}</span>
+                <strong>{formatMembershipStatus(profile?.membership, language)}</strong>
+              </div>
+              <div>
+                <span>{t.totalGenerations}</span>
+                <strong>{Number(usage.totalGenerations || 0)}</strong>
+              </div>
+              <div>
+                <span>{t.totalGenerationCredits}</span>
+                <strong>{Number(usage.totalGenerationCredits || 0)}</strong>
+              </div>
+            </div>
+            <button className="portalButton accountBillingButton" type="button" onClick={onBilling}>
+              <CreditCard size={16} />
+              {t.membershipCenter}
+            </button>
+          </section>
+        </div>
+
+        <section className="transactionSection accountTransactions">
+          <h3>
+            <ReceiptText size={18} />
+            {t.generationUsage}
+          </h3>
+          {generationTransactions.length ? (
+            <div className="transactionList">
+              {generationTransactions.map((transaction) => (
+                <TransactionItem
+                  transaction={transaction}
+                  language={language}
+                  casesById={casesById}
+                  onOpenCase={onOpenCase}
+                  key={transaction.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="emptyTransactions">{t.noGenerationTransactions}</p>
+          )}
+        </section>
+      </section>
+    </div>
+  );
+}
+
+function AdminMetricCard({ icon, label, value, hint }) {
+  return (
+    <div className="adminMetricCard">
+      <span className="adminMetricIcon">{icon}</span>
+      <div>
+        <span>{label}</span>
+        <strong>{formatNumber(value)}</strong>
+        {hint ? <em>{hint}</em> : null}
+      </div>
+    </div>
+  );
+}
+
+function AdminMiniBars({ rows, language }) {
+  const maxViews = Math.max(...rows.map((row) => Number(row.pageViews || 0)), 0);
+  const maxUsers = Math.max(...rows.map((row) => Number(row.activeUsers || 0)), 0);
+
+  return (
+    <div className="adminMiniBars">
+      {rows.map((row) => (
+        <div className="adminMiniBar" key={row.date}>
+          <span>{formatShortDate(row.date, language)}</span>
+          <div>
+            <i style={{ width: `${percentOf(row.pageViews, maxViews)}%` }} />
+            <b style={{ width: `${percentOf(row.activeUsers, maxUsers)}%` }} />
+          </div>
+          <strong>{formatNumber(row.pageViews)}</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AdminRankList({ rows, type, language }) {
+  const t = copy[language];
+  if (!rows?.length) return <p className="emptyTransactions">{t.noAnalyticsRows}</p>;
+
+  return (
+    <div className="adminRankList">
+      {rows.map((row, index) => {
+        const title = row.page || row.channel || row.country || '-';
+        const mainValue = row.pageViews ?? row.sessions ?? row.activeUsers ?? 0;
+        const subValue = row.activeUsers ?? row.pageViews ?? 0;
+        return (
+          <div className="adminRankItem" key={`${type}-${title}-${index}`}>
+            <span>{index + 1}</span>
+            <div>
+              <strong title={title}>{title}</strong>
+              <em>{type === 'channels' ? t.sessions : t.uv}: {formatNumber(subValue)}</em>
+            </div>
+            <b>{formatNumber(mainValue)}</b>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function AdminPanel({ open, language, session, casesById, onClose, onOpenCase }) {
+  const t = copy[language];
+  const [users, setUsers] = useState([]);
+  const [metrics, setMetrics] = useState(null);
+  const [range, setRange] = useState('7d');
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+  const [adjustment, setAdjustment] = useState(null);
+  const [adjustStatus, setAdjustStatus] = useState('idle');
+
+  async function loadAdminData(nextRange = range) {
+    if (!session?.access_token) {
+      setStatus('error');
+      setMessage(t.adminOnly);
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('');
+    try {
+      const headers = getAuthHeaders(session);
+      const [usersResponse, metricsResponse] = await Promise.all([
+        fetch('/api/admin/users', { headers }),
+        fetch(`/api/admin/metrics?range=${encodeURIComponent(nextRange)}`, { headers })
+      ]);
+      const usersPayload = await usersResponse.json().catch(() => ({}));
+      const metricsPayload = await metricsResponse.json().catch(() => ({}));
+      if (!usersResponse.ok || !usersPayload.ok) {
+        throw new Error(usersPayload.error || 'SERVER_NOT_CONFIGURED');
+      }
+      if (!metricsResponse.ok || !metricsPayload.ok) {
+        throw new Error(metricsPayload.error || 'SERVER_NOT_CONFIGURED');
+      }
+      setUsers(usersPayload.users || []);
+      setMetrics(metricsPayload);
+      setStatus('ready');
+    } catch (error) {
+      setStatus('error');
+      setMessage(error.message === 'SERVER_NOT_CONFIGURED' ? t.checkoutUnavailable : generationErrorMessage(error.message, language));
+    }
+  }
+
+  async function handleAdjustCredits(event) {
+    event.preventDefault();
+    if (!adjustment?.userId) return;
+    setAdjustStatus('loading');
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/admin/credits/adjust', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(session)
+        },
+        body: JSON.stringify({
+          userId: adjustment.userId,
+          amount: Number(adjustment.amount),
+          reason: adjustment.reason
+        })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || 'CREDIT_ADJUSTMENT_FAILED');
+      }
+      setAdjustment(null);
+      setAdjustStatus('idle');
+      await loadAdminData();
+    } catch (error) {
+      setAdjustStatus('error');
+      setMessage(generationErrorMessage(error.message, language));
+    }
+  }
+
+  useEffect(() => {
+    if (open) loadAdminData(range);
+  }, [open, session?.access_token, range]);
+
+  if (!open) return null;
+  const traffic = metrics?.traffic || {};
+  const business = metrics?.business || {};
+  const trafficTotals = traffic.totals || {};
+  const analyticsMessage = !traffic.configured
+    ? t.analyticsNotConfigured
+    : traffic.error
+      ? t.analyticsLoadFailed
+      : '';
+
+  return (
+    <div
+      className="previewOverlay adminOverlay"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section className="adminDialog" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+        <button className="previewClose" type="button" onClick={onClose} aria-label={t.closePreview}>
+          <X size={20} />
+        </button>
+        <div className="adminHeader">
+          <div>
+            <span className="eyebrow">
+              <ShieldCheck size={16} />
+              {t.superAdmin}
+            </span>
+            <h2 id="admin-title">{t.adminTitle}</h2>
+            <p>{t.adminSubtitle}</p>
+          </div>
+          <div className="adminHeaderActions">
+            <div className="adminRangeToggle" role="group" aria-label={t.adminMetrics}>
+              {[
+                ['7d', t.range7d],
+                ['30d', t.range30d]
+              ].map(([value, label]) => (
+                <button
+                  className={cx(range === value && 'active')}
+                  type="button"
+                  onClick={() => setRange(value)}
+                  key={value}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button type="button" onClick={() => loadAdminData()} disabled={status === 'loading'}>
+              {status === 'loading' ? <LoaderCircle className="spinIcon" size={17} /> : <RefreshCw size={17} />}
+              {t.refresh}
+            </button>
+          </div>
+        </div>
+
+        {metrics ? (
+          <div className="adminDashboard">
+            <section className="adminBlock">
+              <h3>
+                <TrendingUp size={18} />
+                {t.trafficMetrics}
+              </h3>
+              {analyticsMessage ? <p className="adminNotice">{analyticsMessage}</p> : null}
+              <div className="adminMetricGrid">
+                <AdminMetricCard icon={<BarChart3 size={18} />} label={t.pv} value={trafficTotals.pageViews} />
+                <AdminMetricCard icon={<Users size={18} />} label={t.uv} value={trafficTotals.activeUsers} />
+                <AdminMetricCard icon={<ReceiptText size={18} />} label={t.sessions} value={trafficTotals.sessions} />
+                <AdminMetricCard icon={<UserPlus size={18} />} label={t.newUsers} value={trafficTotals.newUsers} />
+              </div>
+              <div className="adminTrafficGrid">
+                <div className="adminPanelCard wide">
+                  <h4>{t.dailyTraffic}</h4>
+                  {traffic.daily?.length ? (
+                    <AdminMiniBars rows={traffic.daily} language={language} />
+                  ) : (
+                    <p className="emptyTransactions">{t.noAnalyticsRows}</p>
+                  )}
+                </div>
+                <div className="adminPanelCard">
+                  <h4>{t.topPages}</h4>
+                  <AdminRankList rows={traffic.topPages || []} type="pages" language={language} />
+                </div>
+                <div className="adminPanelCard">
+                  <h4>{t.channels}</h4>
+                  <AdminRankList rows={traffic.channels || []} type="channels" language={language} />
+                </div>
+                <div className="adminPanelCard">
+                  <h4>{t.countries}</h4>
+                  <AdminRankList rows={traffic.countries || []} type="countries" language={language} />
+                </div>
+              </div>
+            </section>
+
+            <section className="adminBlock">
+              <h3>
+                <ShieldCheck size={18} />
+                {t.businessMetrics}
+              </h3>
+              <div className="adminMetricGrid">
+                <AdminMetricCard icon={<Users size={18} />} label={t.registeredUsers} value={business.totalUsers} hint={`${t.newRegistrations}: ${formatNumber(business.rangeUsers)}`} />
+                <AdminMetricCard icon={<Crown size={18} />} label={t.activeMemberships} value={business.activeMemberships} />
+                <AdminMetricCard icon={<ImageIcon size={18} />} label={t.totalGenerationsMetric} value={business.totalGenerations} hint={`${t.rangeGenerations}: ${formatNumber(business.rangeGenerations)}`} />
+                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsConsumed} value={business.totalGenerationCredits} hint={`${t.rangeGenerations}: ${formatNumber(business.rangeGenerationCredits)}`} />
+                <AdminMetricCard icon={<PackageCheck size={18} />} label={t.succeeded} value={business.succeededGenerations} />
+                <AdminMetricCard icon={<X size={18} />} label={t.failed} value={business.failedGenerations} />
+                <AdminMetricCard icon={<LoaderCircle size={18} />} label={t.pending} value={business.pendingGenerations} />
+                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsInCirculation} value={business.totalCreditBalance} />
+                <AdminMetricCard icon={<CreditCard size={18} />} label={t.purchasedCredits} value={business.purchasedCredits} />
+                <AdminMetricCard icon={<Crown size={18} />} label={t.membershipCredits} value={business.membershipCredits} />
+              </div>
+            </section>
+          </div>
+        ) : null}
+
+        <div className="adminHeader compact">
+          <div>
+            <h3>{t.users}</h3>
+          </div>
+          <button type="button" onClick={() => loadAdminData()} disabled={status === 'loading'}>
+            {status === 'loading' ? <LoaderCircle className="spinIcon" size={17} /> : <RefreshCw size={17} />}
+            {t.refresh}
+          </button>
+        </div>
+        {status === 'loading' ? (
+          <div className="adminState">
+            <LoaderCircle className="spinIcon" size={20} />
+            {t.loadingUsers}
+          </div>
+        ) : null}
+        {status === 'error' ? <p className="authMessage error">{message || t.adminOnly}</p> : null}
+        {adjustment ? (
+          <form className="adminAdjustForm" onSubmit={handleAdjustCredits}>
+            <strong>{adjustment.email}</strong>
+            <label>
+              {t.creditAmount}
+              <input
+                type="number"
+                step="1"
+                value={adjustment.amount}
+                onChange={(event) => setAdjustment((current) => ({ ...current, amount: event.target.value }))}
+              />
+            </label>
+            <label>
+              {t.reason}
+              <input
+                value={adjustment.reason}
+                onChange={(event) => setAdjustment((current) => ({ ...current, reason: event.target.value }))}
+              />
+            </label>
+            <button type="submit" disabled={adjustStatus === 'loading'}>
+              {adjustStatus === 'loading' ? <LoaderCircle className="spinIcon" size={16} /> : <Coins size={16} />}
+              {t.applyAdjustment}
+            </button>
+          </form>
+        ) : null}
+        {adjustStatus === 'error' ? <p className="authMessage error">{message}</p> : null}
+        {status !== 'loading' && !users.length && status !== 'error' ? (
+          <div className="adminState">
+            <Users size={20} />
+            {t.noUsers}
+          </div>
+        ) : null}
+        {users.length ? (
+          <div className="adminTableWrap">
+            <table className="adminTable">
+              <thead>
+                <tr>
+                  <th>{t.users}</th>
+                  <th>{t.role}</th>
+                  <th>{t.creditBalance}</th>
+                  <th>{t.currentPlan}</th>
+                  <th>{t.freeGeneration}</th>
+                  <th>{t.totalGenerations}</th>
+                  <th>{t.spentCredits}</th>
+                  <th>{t.purchased}</th>
+                  <th>{t.lastGeneration}</th>
+                  <th>{t.createdAt}</th>
+                  <th>{t.adminAdjust}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>
+                      <div className="adminUserCell">
+                        {user.avatarUrl ? <img src={user.avatarUrl} alt="" /> : <UserCircle size={28} />}
+                        <div>
+                          <strong>{user.email}</strong>
+                          {user.fullName ? <span>{user.fullName}</span> : null}
+                        </div>
+                      </div>
+                    </td>
+                    <td><span className="roleBadge">{user.role}</span></td>
+                    <td>{user.creditBalance}</td>
+                    <td>{formatMembershipStatus(user.membership, language)}</td>
+                    <td>{user.freeUsed ? t.freeUsedShort : t.freeReady}</td>
+                    <td>{formatNumber(user.usage?.totalGenerations)}</td>
+                    <td>{formatNumber(user.usage?.totalGenerationCredits)}</td>
+                    <td>{formatNumber(user.usage?.purchasedCredits)}</td>
+                    <td>
+                      {user.usage?.lastGenerationCaseId ? (
+                        <button
+                          className="tableAction compactAction"
+                          type="button"
+                          onClick={() => {
+                            const caseItem = casesById?.get(user.usage.lastGenerationCaseId);
+                            if (caseItem) onOpenCase?.(caseItem);
+                          }}
+                          disabled={!casesById?.has(user.usage.lastGenerationCaseId)}
+                        >
+                          <ImageIcon size={14} />
+                          #{user.usage.lastGenerationCaseId}
+                        </button>
+                      ) : '-'}
+                    </td>
+                    <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US') : '-'}</td>
+                    <td>
+                      <button
+                        className="tableAction"
+                        type="button"
+                        onClick={() => setAdjustment({
+                          userId: user.id,
+                          email: user.email,
+                          amount: 10,
+                          reason: ''
+                        })}
+                      >
+                        <Coins size={15} />
+                        {t.adminAdjust}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
+    </div>
+  );
+}
+
+function BillingPanel({
+  open,
+  language,
+  session,
+  profile,
+  notice,
+  casesById,
+  onClose,
+  onAuthRequired,
+  onProfileChange,
+  onOpenCase
+}) {
+  const t = copy[language];
+  const [plans, setPlans] = useState([]);
+  const [packs, setPacks] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [checkoutAvailable, setCheckoutAvailable] = useState(false);
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+  const [busyProduct, setBusyProduct] = useState('');
+
+  async function loadBilling() {
+    setStatus('loading');
+    setMessage(notice || '');
+
+    try {
+      const headers = getAuthHeaders(session);
+      const [plansResponse, historyResponse] = await Promise.all([
+        fetch('/api/billing/plans', { headers }),
+        session?.access_token
+          ? fetch('/api/billing/history', { headers })
+          : Promise.resolve(null)
+      ]);
+      const plansPayload = await plansResponse.json().catch(() => ({}));
+      if (!plansResponse.ok || !plansPayload.ok) {
+        throw new Error(plansPayload.error || 'SERVER_NOT_CONFIGURED');
+      }
+
+      setPlans(plansPayload.plans || []);
+      setPacks(plansPayload.packs || []);
+      setCheckoutAvailable(Boolean(plansPayload.checkoutAvailable));
+      if (plansPayload.user) onProfileChange(plansPayload.user);
+
+      if (historyResponse) {
+        const historyPayload = await historyResponse.json().catch(() => ({}));
+        if (historyResponse.ok && historyPayload.ok) {
+          setTransactions(historyPayload.transactions || []);
+        }
+      } else {
+        setTransactions([]);
+      }
+
+      setStatus('ready');
+    } catch (error) {
+      setStatus('error');
+      setMessage(generationErrorMessage(error.message, language));
+    }
+  }
+
+  useEffect(() => {
+    if (open) loadBilling();
+  }, [open, session?.access_token]);
+
+  async function handleCheckout(product) {
+    if (!session?.access_token) {
+      onAuthRequired();
+      return;
+    }
+    if (!checkoutAvailable) {
+      setMessage(t.checkoutUnavailable);
+      return;
+    }
+
+    setBusyProduct(`${product.type}:${product.id}`);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/billing/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(session)
+        },
+        body: JSON.stringify({
+          productType: product.type,
+          productId: product.id
+        })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok || !payload.url) {
+        throw new Error(payload.error || 'CHECKOUT_FAILED');
+      }
+      if (payload.user) onProfileChange(payload.user);
+      window.location.href = payload.url;
+    } catch (error) {
+      setBusyProduct('');
+      setMessage(generationErrorMessage(error.message, language));
+    }
+  }
+
+  async function handlePortal() {
+    if (!session?.access_token) {
+      onAuthRequired();
+      return;
+    }
+    setBusyProduct('portal');
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/billing/portal', {
+        method: 'POST',
+        headers: getAuthHeaders(session)
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok || !payload.url) {
+        throw new Error(payload.error || 'BILLING_PORTAL_FAILED');
+      }
+      window.location.href = payload.url;
+    } catch (error) {
+      setBusyProduct('');
+      setMessage(generationErrorMessage(error.message, language));
+    }
+  }
+
+  if (!open) return null;
+
+  const activePlanId = profile?.membership?.isActive ? profile.membership.planId : '';
+  const activePlan = plans.find((plan) => plan.id === activePlanId);
+  const activePlanName = activePlan ? productText(activePlan.name, language) : activePlanId || t.noPlan;
+
+  return (
+    <div
+      className="previewOverlay billingOverlay"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section className="billingDialog" role="dialog" aria-modal="true" aria-labelledby="billing-title">
+        <button className="previewClose" type="button" onClick={onClose} aria-label={t.closePreview}>
+          <X size={20} />
+        </button>
+        <div className="billingHero">
+          <span className="eyebrow">
+            <CreditCard size={16} />
+            {t.membershipCenter}
+          </span>
+          <h2 id="billing-title">{t.billingTitle}</h2>
+          <p>{t.billingSubtitle}</p>
+        </div>
+
+        <div className="billingSummary">
+          <div>
+            <span>{t.balanceTitle}</span>
+            <strong>{profile?.creditBalance || 0}</strong>
+            <em>{t.credits}</em>
+          </div>
+          <div>
+            <span>{t.currentPlan}</span>
+            <strong>{activePlanName}</strong>
+            <em>{formatMembershipStatus(profile?.membership, language)}</em>
+          </div>
+          <div>
+            <span>{t.freeGeneration}</span>
+            <strong>{profile?.freeUsed ? t.freeUsedShort : t.freeReady}</strong>
+            <em>{checkoutAvailable ? t.paymentReady : t.billingNotReady}</em>
+          </div>
+        </div>
+
+        {!session?.access_token ? (
+          <div className="billingState">
+            <p>{t.authRequired}</p>
+            <button type="button" onClick={onAuthRequired}>
+              <LogIn size={17} />
+              {t.signIn}
+            </button>
+          </div>
+        ) : null}
+
+        {status === 'loading' ? (
+          <div className="billingState">
+            <LoaderCircle className="spinIcon" size={20} />
+            {t.loadBilling}
+          </div>
+        ) : null}
+
+        {message ? (
+          <p className={cx('authMessage', status === 'error' && 'error')}>{message}</p>
+        ) : null}
+
+        <div className="billingSections">
+          <section>
+            <h3>
+              <Crown size={18} />
+              {t.membershipPlans}
+            </h3>
+            <div className="billingCards">
+              {plans.map((plan) => {
+                const isCurrent = activePlanId === plan.id;
+                const busy = busyProduct === `${plan.type}:${plan.id}`;
+                return (
+                  <article className={cx('billingCard', isCurrent && 'current')} key={plan.id}>
+                    <span>{productText(plan.name, language)}</span>
+                    <strong>{plan.priceLabel}<small>/{plan.interval}</small></strong>
+                    <p>{productText(plan.description, language)}</p>
+                    <div className="billingCredits">{t.monthlyCredits(plan.monthlyCredits)}</div>
+                    <button type="button" disabled={busy || isCurrent} onClick={() => handleCheckout(plan)}>
+                      {busy ? <LoaderCircle className="spinIcon" size={16} /> : <Crown size={16} />}
+                      {isCurrent ? t.currentPlan : t.subscribe}
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+            {profile?.membership?.isActive ? (
+              <button className="portalButton" type="button" onClick={handlePortal} disabled={busyProduct === 'portal'}>
+                {busyProduct === 'portal' ? <LoaderCircle className="spinIcon" size={16} /> : <CreditCard size={16} />}
+                {t.manageSubscription}
+              </button>
+            ) : null}
+          </section>
+
+          <section>
+            <h3>
+              <Coins size={18} />
+              {t.creditPacks}
+            </h3>
+            <div className="billingCards">
+              {packs.map((pack) => {
+                const busy = busyProduct === `${pack.type}:${pack.id}`;
+                return (
+                  <article className="billingCard" key={pack.id}>
+                    <span>{productText(pack.name, language)}</span>
+                    <strong>{pack.priceLabel}</strong>
+                    <p>{productText(pack.description, language)}</p>
+                    <div className="billingCredits">{t.packCredits(pack.credits)}</div>
+                    <button type="button" disabled={busy} onClick={() => handleCheckout(pack)}>
+                      {busy ? <LoaderCircle className="spinIcon" size={16} /> : <Coins size={16} />}
+                      {t.buyCredits}
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+
+        <section className="transactionSection">
+          <h3>
+            <ReceiptText size={18} />
+            {t.transactionHistory}
+          </h3>
+          {transactions.length ? (
+            <div className="transactionList">
+              {transactions.map((transaction) => (
+                <TransactionItem
+                  transaction={transaction}
+                  language={language}
+                  casesById={casesById}
+                  onOpenCase={onOpenCase}
+                  key={transaction.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="emptyTransactions">{t.noTransactions}</p>
+          )}
+        </section>
+      </section>
     </div>
   );
 }
@@ -639,10 +2171,13 @@ function PreviewDialog({
   language,
   styleLibrary,
   copiedId,
-  freeUsed,
+  session,
+  profile,
   onClose,
   onCopyText,
-  onFreeUsedChange
+  onAuthRequired,
+  onBillingRequired,
+  onProfileChange
 }) {
   const t = copy[language];
   const repoDocsUrl = `${styleLibrary.repository || fallbackRepoUrl}/blob/main/${styleLibrary.templateDocument}`;
@@ -672,8 +2207,19 @@ function PreviewDialog({
 
   useEffect(() => {
     if (preview?.type !== 'case') return;
+    const savedGeneration = getSavedGeneration(preview.item.id);
     setEditablePrompt(preview.item.prompt || '');
-    setGenerationState({ status: 'idle', image: '', message: '' });
+    setGenerationState(
+      savedGeneration
+        ? {
+            status: 'saved',
+            image: savedGeneration.image,
+            message: '',
+            prompt: savedGeneration.prompt || preview.item.prompt || '',
+            savedAt: savedGeneration.savedAt || ''
+          }
+        : { status: 'idle', image: '', message: '', prompt: '', savedAt: '' }
+    );
   }, [preview]);
 
   if (!preview) return null;
@@ -701,16 +2247,30 @@ function PreviewDialog({
   const guidance = listFor(item.guidance, language);
   const pitfalls = listFor(item.pitfalls, language);
   const isGenerating = generationState.status === 'generating';
+  const generatedImage = !isTemplate ? generationState.image : '';
+  const isSignedIn = Boolean(session?.access_token);
+  const creditBalance = Number(profile?.creditBalance || 0);
+  const isOutOfCredits = isSignedIn
+    && creditBalance <= 0
+    && (profile?.isSuperAdmin || Boolean(profile?.freeUsed));
+  const generationLocked = isGenerating;
+  const quotaText = isSignedIn ? getGenerationQuotaText(profile, language) : t.authRequired;
 
   async function handleGenerate() {
     if (isTemplate || isGenerating) return;
+    if (!isSignedIn) {
+      onAuthRequired();
+      setGenerationState({ status: 'idle', image: generatedImage, message: '' });
+      return;
+    }
     const prompt = editablePrompt.trim();
     if (!prompt || prompt.length > 6000) {
       setGenerationState({ status: 'error', image: '', message: t.promptRequired });
       return;
     }
-    if (freeUsed) {
-      setGenerationState({ status: 'error', image: '', message: t.freeLimitReached });
+    if (isOutOfCredits) {
+      onBillingRequired();
+      setGenerationState({ status: 'idle', image: generatedImage, message: t.creditsRequired });
       return;
     }
 
@@ -719,9 +2279,9 @@ function PreviewDialog({
     try {
       const response = await fetch('/api/generate-image', {
         method: 'POST',
-        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(session)
         },
         body: JSON.stringify({
           caseId: item.id,
@@ -731,12 +2291,23 @@ function PreviewDialog({
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok || !payload.ok || !payload.image) {
-        if (payload.error === 'FREE_LIMIT_REACHED') onFreeUsedChange(true);
+        if (payload.user) onProfileChange(payload.user);
+        if (payload.error === 'AUTH_REQUIRED' || payload.loginRequired) {
+          onAuthRequired();
+          setGenerationState({ status: 'idle', image: generatedImage, message: '' });
+          return;
+        }
         throw new Error(payload.error || 'GENERATION_FAILED');
       }
 
-      onFreeUsedChange(true);
-      setGenerationState({ status: 'success', image: payload.image, message: '' });
+      const savedAt = new Date().toISOString();
+      saveGeneratedTest(item.id, {
+        image: payload.image,
+        prompt,
+        savedAt
+      });
+      if (payload.user) onProfileChange(payload.user);
+      setGenerationState({ status: 'success', image: payload.image, message: '', prompt, savedAt });
     } catch (error) {
       setGenerationState({
         status: 'error',
@@ -758,8 +2329,24 @@ function PreviewDialog({
         <button className="previewClose" type="button" onClick={onClose} aria-label={t.closePreview}>
           <X size={20} />
         </button>
-        <div className="previewMedia">
-          <img src={image} alt={imageAlt} />
+        <div className={cx('previewMedia', generatedImage && 'hasComparison')}>
+          {generatedImage ? (
+            <div className="comparisonGrid">
+              <figure className="comparisonFigure">
+                <div className="comparisonLabel">{t.originalImage}</div>
+                <img src={image} alt={imageAlt} />
+              </figure>
+              <figure className="comparisonFigure generatedFigure">
+                <div className="comparisonLabel">
+                  {t.generatedResult}
+                  {generationState.status === 'saved' ? <span>{t.savedInBrowser}</span> : null}
+                </div>
+                <img src={generatedImage} alt={t.generatedResult} />
+              </figure>
+            </div>
+          ) : (
+            <img src={image} alt={imageAlt} />
+          )}
         </div>
         <div className="previewContent">
           <div className="previewMeta">
@@ -790,9 +2377,9 @@ function PreviewDialog({
               {isCopied ? t.copied : isTemplate ? t.copyTemplatePrompt : t.copyPrompt}
             </button>
             {!isTemplate ? (
-              <button type="button" onClick={handleGenerate} disabled={isGenerating || freeUsed}>
+              <button type="button" onClick={handleGenerate} disabled={generationLocked}>
                 {isGenerating ? <LoaderCircle className="spinIcon" size={17} /> : <ImageIcon size={17} />}
-                {isGenerating ? t.generating : t.generateTest}
+                {isGenerating ? t.generating : isOutOfCredits ? t.buyCredits : isSignedIn ? t.generateTest : t.signInToGenerate}
               </button>
             ) : null}
             <a href={primaryLink} target="_blank" rel="noreferrer">
@@ -828,21 +2415,15 @@ function PreviewDialog({
           </div>
           {!isTemplate ? (
             <div className="generationPanel">
-              <div className={cx('generationQuota', freeUsed && 'used')}>
-                {freeUsed ? t.freeLimitReached : t.oneFreeGeneration}
+              <div className={cx('generationQuota', (!isSignedIn || isOutOfCredits) && 'used')}>
+                {quotaText}
               </div>
-              <button type="button" onClick={handleGenerate} disabled={isGenerating || freeUsed}>
+              <button type="button" onClick={handleGenerate} disabled={generationLocked}>
                 {isGenerating ? <LoaderCircle className="spinIcon" size={17} /> : <ImageIcon size={17} />}
-                {isGenerating ? t.generating : t.generateImage}
+                {isGenerating ? t.generating : isOutOfCredits ? t.buyCredits : isSignedIn ? t.generateImage : t.signInToGenerate}
               </button>
               {generationState.status === 'error' ? (
                 <p className="generationMessage">{generationState.message}</p>
-              ) : null}
-              {generationState.image ? (
-                <figure className="generatedResult">
-                  <img src={generationState.image} alt={t.generatedResult} />
-                  <figcaption>{t.generatedResult}</figcaption>
-                </figure>
               ) : null}
             </div>
           ) : null}
@@ -894,6 +2475,7 @@ function PreviewDialog({
 }
 
 function App() {
+  useGaPageViews();
   const [siteData, setSiteData] = useState(null);
   const [styleLibrary, setStyleLibrary] = useState(null);
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'en');
@@ -902,7 +2484,13 @@ function App() {
   const [style, setStyle] = useState('All');
   const [scene, setScene] = useState('All');
   const [preview, setPreview] = useState(null);
-  const [freeUsed, setFreeUsed] = useState(false);
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [billingOpen, setBillingOpen] = useState(false);
+  const [billingNotice, setBillingNotice] = useState('');
   const { copiedId, copyPrompt, copyText } = useCopy();
   const repoUrl = siteData?.repository || fallbackRepoUrl;
   const t = copy[language];
@@ -930,19 +2518,50 @@ function App() {
   }, [language]);
 
   useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return undefined;
+
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setSession(data.session || null);
+    });
+
+    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession || null);
+    });
+
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
-    fetch('/api/generate-image', { credentials: 'include' })
+
+    if (!session?.access_token) {
+      setProfile(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    fetch('/api/me', {
+      headers: getAuthHeaders(session)
+    })
       .then((response) => response.json())
       .then((payload) => {
         if (!cancelled && payload?.ok) {
-          setFreeUsed(Boolean(payload.freeUsed));
+          setProfile(payload.user);
         }
       })
-      .catch(() => null);
+      .catch(() => {
+        if (!cancelled) setProfile(null);
+      });
+
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [session?.access_token]);
 
   useEffect(() => {
     if (!siteData || !styleLibrary || !window.location.hash) return;
@@ -953,10 +2572,38 @@ function App() {
     });
   }, [siteData, styleLibrary]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const billing = params.get('billing');
+    if (!billing) return;
+    if (billing === 'success') setBillingNotice(t.billingSuccess);
+    if (billing === 'cancelled') setBillingNotice(t.billingCancelled);
+    setBillingOpen(true);
+    params.delete('billing');
+    params.delete('session_id');
+    const nextSearch = params.toString();
+    const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', nextUrl);
+  }, [t.billingCancelled, t.billingSuccess]);
+
   const latestCases = useMemo(() => {
     if (!siteData) return [];
     return [...siteData.cases].sort((a, b) => b.id - a.id);
   }, [siteData]);
+
+  const heroCases = useMemo(
+    () => takeDistinctCases(latestCases, HERO_CASE_COUNT),
+    [latestCases]
+  );
+
+  const hotStripCases = useMemo(
+    () => takeDistinctCases(
+      latestCases,
+      HOT_STRIP_CASE_COUNT,
+      new Set(heroCases.map((caseItem) => caseItem.id))
+    ),
+    [heroCases, latestCases]
+  );
 
   const filteredCases = useMemo(() => {
     if (!siteData) return [];
@@ -988,6 +2635,31 @@ function App() {
   );
 
   const visibleCases = filteredCases.slice(0, 72);
+  const casesById = useMemo(() => new Map((siteData?.cases || []).map((caseItem) => [caseItem.id, caseItem])), [siteData]);
+
+  async function handleSignOut() {
+    if (supabase) await supabase.auth.signOut();
+    setSession(null);
+    setProfile(null);
+    setAccountOpen(false);
+    setAdminOpen(false);
+    setBillingOpen(false);
+  }
+
+  function handleProfileChange(nextProfile) {
+    if (nextProfile) setProfile(nextProfile);
+  }
+
+  function handleOpenCaseFromAccount(caseItem) {
+    setAccountOpen(false);
+    setBillingOpen(false);
+    setPreview({ type: 'case', item: caseItem });
+  }
+
+  function handleOpenCaseFromAdmin(caseItem) {
+    setAdminOpen(false);
+    setPreview({ type: 'case', item: caseItem });
+  }
 
   if (!siteData || !styleLibrary) {
     return (
@@ -1009,41 +2681,52 @@ function App() {
         </a>
         <div className="topbarControls">
           <nav>
-            <a href="#agent-skill">{t.navSkill}</a>
-            <a href="#templates">{t.navTemplates}</a>
             <a href="#gallery">{t.navCases}</a>
+            <a href="#templates">{t.navTemplates}</a>
+            <a href="#agent-skill">{t.navSkill}</a>
             <a href={repoUrl} target="_blank" rel="noreferrer">
               GitHub
             </a>
           </nav>
           <LanguageSwitch language={language} setLanguage={setLanguage} />
+          <UserMenu
+            language={language}
+            session={session}
+            profile={profile}
+            onSignIn={() => setAuthOpen(true)}
+            onSignOut={handleSignOut}
+            onAccount={() => setAccountOpen(true)}
+            onAdmin={() => setAdminOpen(true)}
+            onBilling={() => {
+              setBillingNotice('');
+              setBillingOpen(true);
+            }}
+          />
         </div>
       </header>
 
       <Hero
-        latestCases={latestCases}
+        latestCases={heroCases}
         language={language}
         repoUrl={repoUrl}
         totalCases={siteData.totalCases}
         categoryCount={siteData.categories.length}
+        onOpenCase={(item) => setPreview({ type: 'case', item })}
       />
 
       <section className="hotStrip">
-        {latestCases.slice(0, 8).map((caseItem) => (
-          <a href={caseItem.githubUrl} target="_blank" rel="noreferrer" key={caseItem.id}>
+        {hotStripCases.map((caseItem) => (
+          <button
+            type="button"
+            aria-label={`${language === 'zh' ? '打开案例' : 'Open case'} ${caseItem.id}: ${caseItem.title}`}
+            onClick={() => setPreview({ type: 'case', item: caseItem })}
+            key={caseItem.id}
+          >
             <img src={caseItem.image} alt={caseItem.imageAlt} />
             <span>#{caseItem.id}</span>
-          </a>
+          </button>
         ))}
       </section>
-
-      <SkillSection language={language} repoUrl={repoUrl} />
-
-      <TemplateSection
-        language={language}
-        styleLibrary={styleLibrary}
-        onOpenTemplate={(item) => setPreview({ type: 'template', item })}
-      />
 
       <section className="gallerySection" id="gallery">
         <div className="sectionHead">
@@ -1113,7 +2796,10 @@ function App() {
               language={language}
               onCopy={copyPrompt}
               onOpen={(item) => setPreview({ type: 'case', item })}
-              onGenerate={(item) => setPreview({ type: 'case', item })}
+              onGenerate={(item) => {
+                setPreview({ type: 'case', item });
+                if (!session?.access_token) setAuthOpen(true);
+              }}
               styleLibrary={styleLibrary}
               key={caseItem.id}
             />
@@ -1126,15 +2812,69 @@ function App() {
           </p>
         )}
       </section>
+
+      <TemplateSection
+        language={language}
+        styleLibrary={styleLibrary}
+        onOpenTemplate={(item) => setPreview({ type: 'template', item })}
+      />
+
+      <SkillSection language={language} repoUrl={repoUrl} />
       <PreviewDialog
         preview={preview}
         language={language}
         styleLibrary={styleLibrary}
         copiedId={copiedId}
-        freeUsed={freeUsed}
+        session={session}
+        profile={profile}
         onClose={() => setPreview(null)}
         onCopyText={copyText}
-        onFreeUsedChange={setFreeUsed}
+        onAuthRequired={() => setAuthOpen(true)}
+        onBillingRequired={() => {
+          setBillingNotice(t.creditsRequired);
+          setBillingOpen(true);
+        }}
+        onProfileChange={handleProfileChange}
+      />
+      <AuthModal
+        open={authOpen}
+        language={language}
+        onClose={() => setAuthOpen(false)}
+      />
+      <AccountPanel
+        open={accountOpen}
+        language={language}
+        session={session}
+        profile={profile}
+        casesById={casesById}
+        onClose={() => setAccountOpen(false)}
+        onProfileChange={handleProfileChange}
+        onOpenCase={handleOpenCaseFromAccount}
+        onBilling={() => {
+          setAccountOpen(false);
+          setBillingNotice('');
+          setBillingOpen(true);
+        }}
+      />
+      <AdminPanel
+        open={adminOpen}
+        language={language}
+        session={session}
+        casesById={casesById}
+        onClose={() => setAdminOpen(false)}
+        onOpenCase={handleOpenCaseFromAdmin}
+      />
+      <BillingPanel
+        open={billingOpen}
+        language={language}
+        session={session}
+        profile={profile}
+        notice={billingNotice}
+        casesById={casesById}
+        onClose={() => setBillingOpen(false)}
+        onAuthRequired={() => setAuthOpen(true)}
+        onProfileChange={handleProfileChange}
+        onOpenCase={handleOpenCaseFromAccount}
       />
     </main>
   );

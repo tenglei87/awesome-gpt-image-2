@@ -69,6 +69,8 @@ button {
 .brand,
 .topbar nav,
 .languageSwitch,
+.accountButton,
+.userMenu,
 .eyebrow,
 .heroActions a,
 .metrics span,
@@ -127,29 +129,302 @@ button {
   color: #ffffff;
 }
 
-.languageSwitch {
+.dropdownControl {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  min-height: 42px;
-  padding: 4px;
-  border-radius: 8px;
 }
 
-.languageSwitch button {
-  min-width: 42px;
-  min-height: 32px;
+.languageSwitch,
+.userMenu {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dropdownTrigger,
+.userTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(9, 15, 32, 0.68);
+  color: #dfeaff;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
+}
+
+.dropdownTrigger {
+  min-width: 82px;
+  padding: 0 12px;
+}
+
+.dropdownTrigger:hover,
+.dropdownTrigger.open,
+.userTrigger:hover,
+.userTrigger.open {
+  border-color: rgba(103, 232, 249, 0.62);
+  background: rgba(103, 232, 249, 0.13);
+  color: #ffffff;
+}
+
+.dropdownTrigger svg,
+.userTrigger svg {
+  color: #9eeeff;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  min-width: 172px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(7, 12, 26, 0.96);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(18px);
+}
+
+.languageMenu button,
+.dropdownAction {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 38px;
   border: 0;
   border-radius: 7px;
+  padding: 0 10px;
   background: transparent;
-  color: #b7c7df;
-  font-weight: 800;
+  color: #c9d8ef;
+  font-weight: 850;
+  text-align: left;
 }
 
-.languageSwitch button:hover,
-.languageSwitch button.active {
-  background: linear-gradient(135deg, rgba(66, 230, 255, 0.22), rgba(120, 255, 185, 0.18));
+.languageMenu button {
+  justify-content: space-between;
+}
+
+.languageMenu button strong {
+  color: #8ef6ff;
+  font-size: 12px;
+}
+
+.languageMenu button:hover,
+.languageMenu button.active,
+.dropdownAction:hover {
+  background: rgba(103, 232, 249, 0.12);
   color: #ffffff;
+}
+
+.accountButton,
+.iconTextButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #dfeaff;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.iconTextButton {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(9, 15, 32, 0.68);
+}
+
+.iconTextButton:hover {
+  border-color: rgba(103, 232, 249, 0.62);
+  background: rgba(103, 232, 249, 0.13);
+}
+
+.accountButton {
+  position: relative;
+  min-width: 116px;
+  overflow: hidden;
+  border: 1px solid rgba(134, 255, 219, 0.72);
+  background:
+    linear-gradient(135deg, rgba(78, 241, 255, 0.96), rgba(130, 255, 188, 0.98) 54%, rgba(239, 255, 111, 0.98));
+  color: #04121d;
+  box-shadow:
+    0 18px 42px rgba(57, 232, 255, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.accountButton::after {
+  position: absolute;
+  inset: 1px auto 1px -35%;
+  z-index: 0;
+  width: 34%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  content: "";
+  pointer-events: none;
+  transform: skewX(-16deg);
+  transition: left 260ms ease;
+}
+
+.accountButton svg,
+.accountButton span {
+  position: relative;
+  z-index: 1;
+}
+
+.accountButton:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.08);
+  box-shadow:
+    0 20px 54px rgba(57, 232, 255, 0.38),
+    0 0 0 4px rgba(120, 255, 185, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.accountButton:hover::after {
+  left: 106%;
+}
+
+.userTrigger {
+  min-width: 58px;
+  padding: 0 9px 0 8px;
+}
+
+.avatarBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(103, 232, 249, 0.12);
+  color: #9eeeff;
+  overflow: hidden;
+}
+
+.avatarBadge img,
+.userSummaryAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.userDropdown {
+  min-width: 292px;
+}
+
+.userSummary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 8px 8px 10px;
+}
+
+.userSummary svg {
+  color: #9eeeff;
+}
+
+.userSummaryAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+}
+
+.userSummary strong,
+.userSummary span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userSummary strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.userSummary span {
+  margin-top: 3px;
+  color: #9aaac0;
+  font-size: 12px;
+}
+
+.userStats {
+  display: grid;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.userStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  border-radius: 7px;
+  padding: 0 9px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #d4e1f5;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.userStat svg {
+  color: #ffe1a8;
+}
+
+.userStat.admin {
+  border: 1px solid rgba(120, 255, 185, 0.3);
+  background: rgba(120, 255, 185, 0.1);
+  color: #c8ffb8;
+}
+
+.userStat.admin svg {
+  color: #c8ffb8;
+}
+
+.dropdownDivider {
+  height: 1px;
+  margin: 8px 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdownAction {
+  gap: 9px;
+  justify-content: flex-start;
+}
+
+.dropdownAction.danger:hover {
+  background: rgba(255, 90, 120, 0.12);
+  color: #ffd0d8;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid rgba(120, 255, 185, 0.3);
+  border-radius: 999px;
+  padding: 0 7px;
+  background: rgba(120, 255, 185, 0.1);
+  color: #c8ffb8;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.iconTextButton {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .hero {
@@ -293,10 +568,13 @@ button {
   position: absolute;
   display: block;
   overflow: hidden;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
   background: #111a2c;
+  color: inherit;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  text-align: left;
   transform: rotate(var(--tilt));
   transition: transform 220ms ease, border-color 220ms ease;
   animation: cardDrift 7s ease-in-out infinite;
@@ -373,13 +651,16 @@ button {
   margin: 0 auto 84px;
 }
 
-.hotStrip a {
+.hotStrip button {
   position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  text-align: left;
 }
 
 .hotStrip img {
@@ -389,7 +670,7 @@ button {
   transition: transform 220ms ease;
 }
 
-.hotStrip a:hover img {
+.hotStrip button:hover img {
   transform: scale(1.06);
 }
 
@@ -993,7 +1274,11 @@ button {
 }
 
 .caseActions {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 42px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px;
+}
+
+.caseActions button:first-child {
+  grid-column: 1 / -1;
 }
 
 .templateActions {
@@ -1006,12 +1291,15 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-width: 0;
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
   font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .cardActions button:hover,
@@ -1093,6 +1381,64 @@ button {
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.48);
+}
+
+.previewMedia.hasComparison {
+  align-items: center;
+  padding: 18px;
+}
+
+.comparisonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+.comparisonFigure {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(3, 7, 15, 0.62);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+}
+
+.generatedFigure {
+  border-color: rgba(120, 255, 185, 0.24);
+  background: rgba(120, 255, 185, 0.05);
+}
+
+.comparisonLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 12px;
+  color: #e8f7ff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.comparisonLabel span {
+  color: #9cf7c5;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.comparisonFigure img {
+  width: 100%;
+  height: min(62vh, 620px);
+  max-height: none;
+  border-radius: 0;
+  object-fit: contain;
+  box-shadow: none;
 }
 
 .previewContent {
@@ -1364,6 +1710,898 @@ button {
   font-weight: 900;
 }
 
+.authDialog,
+.adminDialog,
+.billingDialog {
+  position: relative;
+  width: min(100%, 460px);
+  max-height: min(860px, 92vh);
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(66, 230, 255, 0.15), transparent 38%),
+    linear-gradient(145deg, rgba(12, 18, 36, 0.98), rgba(6, 10, 21, 0.96));
+  box-shadow: 0 34px 120px rgba(0, 0, 0, 0.56);
+}
+
+.authDialog {
+  padding: 30px;
+}
+
+.authIcon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 8px;
+  background: rgba(103, 232, 249, 0.12);
+  color: #9eeeff;
+  place-items: center;
+}
+
+.authDialog h2,
+.adminDialog h2,
+.accountDialog h2 {
+  margin: 18px 48px 10px 0;
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.authDialog p,
+.adminDialog p,
+.accountDialog p {
+  margin: 0;
+  color: #aebcd0;
+  line-height: 1.68;
+}
+
+.googleButton,
+.adminHeader button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 1px solid rgba(120, 255, 185, 0.34);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, rgba(66, 230, 255, 0.2), rgba(120, 255, 185, 0.16));
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.googleButton {
+  width: 100%;
+  margin-top: 24px;
+  min-height: 44px;
+  border-color: #dadce0;
+  background: #ffffff;
+  color: #1f1f1f;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: 0 1px 2px rgba(3, 7, 15, 0.16);
+}
+
+.googleButton:hover {
+  background: #f8fafd;
+  border-color: #d2e3fc;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.18);
+}
+
+.googleIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.googleButton:disabled,
+.adminHeader button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.authMessage {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 198, 102, 0.28);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 198, 102, 0.08);
+  color: #ffe1a8;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.authMessage.sent {
+  border-color: rgba(120, 255, 185, 0.28);
+  background: rgba(120, 255, 185, 0.08);
+  color: #c8ffb8;
+}
+
+.authMessage.error {
+  border-color: rgba(255, 112, 112, 0.26);
+  background: rgba(255, 112, 112, 0.08);
+  color: #ffc7c7;
+}
+
+.adminDialog {
+  width: min(1180px, 100%);
+  padding: 24px;
+}
+
+.billingDialog {
+  width: min(1080px, 100%);
+  padding: 24px;
+}
+
+.accountDialog {
+  width: min(920px, 100%);
+  padding: 24px;
+}
+
+.accountHeader {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.accountAvatar {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 8px;
+  background: rgba(103, 232, 249, 0.1);
+  color: #9eeeff;
+  place-items: center;
+}
+
+.accountAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adminHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.adminHeader.compact {
+  align-items: center;
+  margin: 18px 0 12px;
+}
+
+.adminHeader.compact h3 {
+  margin: 0;
+  color: #eaf3ff;
+  font-size: 18px;
+}
+
+.adminHeader h2 {
+  margin-top: 14px;
+}
+
+.adminHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adminRangeToggle {
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.adminRangeToggle button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 7px;
+  padding: 0 10px;
+  background: transparent;
+  color: #aebcd0;
+  box-shadow: none;
+}
+
+.adminRangeToggle button.active,
+.adminRangeToggle button:hover {
+  background: rgba(103, 232, 249, 0.14);
+  color: #ffffff;
+}
+
+.adminDashboard,
+.adminBlock {
+  display: grid;
+  gap: 14px;
+}
+
+.adminDashboard {
+  margin-bottom: 18px;
+}
+
+.adminBlock {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.adminBlock h3,
+.adminPanelCard h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #eaf3ff;
+  letter-spacing: 0;
+}
+
+.adminBlock h3 {
+  font-size: 16px;
+}
+
+.adminPanelCard h4 {
+  font-size: 14px;
+}
+
+.adminNotice {
+  margin: 0;
+  border: 1px solid rgba(255, 198, 102, 0.22);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 198, 102, 0.08);
+  color: #ffe1a8;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.adminMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.adminMetricCard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  min-height: 94px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(3, 7, 15, 0.45);
+}
+
+.adminMetricIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(103, 232, 249, 0.11);
+  color: #9eeeff;
+  place-items: center;
+}
+
+.adminMetricCard div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.adminMetricCard span:not(.adminMetricIcon) {
+  color: #8eeeff;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.adminMetricCard strong {
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.adminMetricCard em {
+  color: #93a4bc;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.adminTrafficGrid {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.adminPanelCard {
+  display: grid;
+  gap: 12px;
+  min-height: 210px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(3, 7, 15, 0.45);
+}
+
+.adminMiniBars {
+  display: grid;
+  gap: 9px;
+}
+
+.adminMiniBar {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 52px;
+  gap: 9px;
+  align-items: center;
+}
+
+.adminMiniBar span,
+.adminMiniBar strong {
+  color: #aebcd0;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adminMiniBar strong {
+  color: #ffffff;
+  text-align: right;
+}
+
+.adminMiniBar div {
+  position: relative;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.adminMiniBar i,
+.adminMiniBar b {
+  position: absolute;
+  left: 0;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.adminMiniBar i {
+  top: 2px;
+  background: linear-gradient(90deg, rgba(66, 230, 255, 0.9), rgba(120, 255, 185, 0.9));
+}
+
+.adminMiniBar b {
+  bottom: 2px;
+  background: rgba(199, 255, 101, 0.72);
+}
+
+.adminRankList {
+  display: grid;
+  gap: 8px;
+}
+
+.adminRankItem {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 40px;
+  border-radius: 7px;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.adminRankItem > span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(103, 232, 249, 0.12);
+  color: #9eeeff;
+  font-size: 11px;
+  font-weight: 900;
+  place-items: center;
+}
+
+.adminRankItem div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.adminRankItem strong {
+  overflow: hidden;
+  color: #eaf3ff;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminRankItem em {
+  color: #93a4bc;
+  font-size: 11px;
+  font-style: normal;
+}
+
+.adminRankItem b {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.adminTableWrap {
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  color: #dfeaff;
+}
+
+.adminTable th,
+.adminTable td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.adminTable th {
+  background: rgba(255, 255, 255, 0.055);
+  color: #9eeeff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.adminTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.adminUserCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.adminUserCell img,
+.adminUserCell svg {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.adminUserCell img {
+  object-fit: cover;
+}
+
+.adminUserCell div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.adminUserCell strong,
+.adminUserCell span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminUserCell span {
+  color: #8d9bb0;
+  font-size: 12px;
+}
+
+.adminState {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  color: #aebcd0;
+  font-weight: 800;
+}
+
+.adminAdjustForm {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 120px minmax(180px, 1.2fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 0 0 16px;
+  border: 1px solid rgba(103, 232, 249, 0.14);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(103, 232, 249, 0.06);
+}
+
+.adminAdjustForm strong {
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminAdjustForm label {
+  display: grid;
+  gap: 6px;
+  color: #9eeeff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adminAdjustForm input {
+  min-height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  outline: 0;
+  padding: 0 10px;
+  background: rgba(3, 7, 15, 0.72);
+  color: #ffffff;
+}
+
+.adminAdjustForm button,
+.accountForm button,
+.tableAction,
+.billingState button,
+.billingCard button,
+.portalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid rgba(120, 255, 185, 0.32);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: rgba(120, 255, 185, 0.1);
+  color: #d8ffe4;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.tableAction {
+  min-height: 34px;
+  color: #eaf3ff;
+}
+
+.compactAction {
+  min-height: 30px;
+  padding: 0 9px;
+}
+
+.billingHero h2 {
+  margin: 18px 48px 10px 0;
+  color: #ffffff;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.billingHero p {
+  max-width: 720px;
+  margin: 0;
+  color: #aebcd0;
+  line-height: 1.7;
+}
+
+.billingSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.billingSummary div,
+.accountForm,
+.accountOverview,
+.billingCard,
+.transactionSection,
+.billingState {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.billingSummary div {
+  display: grid;
+  gap: 6px;
+  min-height: 108px;
+  padding: 14px;
+}
+
+.billingSummary span,
+.accountMetrics span,
+.billingCard span,
+.transactionItem span {
+  color: #8eeeff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.billingSummary strong,
+.accountMetrics strong {
+  color: #ffffff;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.billingSummary em,
+.accountEmail em,
+.transactionItem em {
+  color: #93a4bc;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.accountGrid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  gap: 16px;
+}
+
+.accountForm,
+.accountOverview {
+  padding: 14px;
+}
+
+.accountForm {
+  display: grid;
+  gap: 12px;
+}
+
+.accountForm label,
+.accountEmail {
+  display: grid;
+  gap: 7px;
+}
+
+.accountForm label span,
+.accountEmail span {
+  color: #8eeeff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.accountForm input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  outline: 0;
+  padding: 0 12px;
+  background: rgba(3, 7, 15, 0.72);
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.accountForm input:focus {
+  border-color: rgba(103, 232, 249, 0.72);
+  box-shadow: 0 0 0 3px rgba(103, 232, 249, 0.1);
+}
+
+.accountEmail strong {
+  color: #eaf3ff;
+  overflow-wrap: anywhere;
+}
+
+.accountOverview h3 {
+  margin: 0 0 12px;
+  color: #eaf3ff;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.accountMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.accountMetrics div {
+  display: grid;
+  gap: 5px;
+  min-height: 88px;
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(3, 7, 15, 0.45);
+}
+
+.accountBillingButton {
+  margin-top: 14px;
+}
+
+.accountTransactions {
+  margin-top: 16px;
+}
+
+.billingState {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 12px;
+  color: #aebcd0;
+  font-weight: 800;
+}
+
+.billingState p {
+  margin: 0;
+}
+
+.billingSections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.billingSections h3,
+.transactionSection h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: #eaf3ff;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.billingCards {
+  display: grid;
+  gap: 10px;
+}
+
+.billingCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.billingCard.current {
+  border-color: rgba(120, 255, 185, 0.38);
+  background: rgba(120, 255, 185, 0.08);
+}
+
+.billingCard strong {
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.billingCard strong small {
+  margin-left: 3px;
+  color: #aebcd0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.billingCard p {
+  min-height: 44px;
+  margin: 0;
+  color: #aebcd0;
+  line-height: 1.55;
+}
+
+.billingCredits {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(103, 232, 249, 0.1);
+  color: #d8fbff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.billingCard button {
+  min-height: 42px;
+  background: linear-gradient(135deg, rgba(66, 230, 255, 0.22), rgba(120, 255, 185, 0.18));
+  color: #ffffff;
+}
+
+.billingCard button:disabled,
+.portalButton:disabled,
+.accountForm button:disabled,
+.adminAdjustForm button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.portalButton {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.transactionSection {
+  margin-top: 20px;
+  padding: 14px;
+}
+
+.transactionList {
+  display: grid;
+  gap: 8px;
+}
+
+.transactionItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 46px;
+  border-radius: 7px;
+  padding: 8px 10px;
+  background: rgba(3, 7, 15, 0.5);
+}
+
+.transactionInfo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.transactionItem strong {
+  font-size: 14px;
+}
+
+.transactionItem strong.positive {
+  color: #c8ffb8;
+}
+
+.transactionItem strong.negative {
+  color: #ffd0d8;
+}
+
+.transactionCaseLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 28px;
+  border: 1px solid rgba(103, 232, 249, 0.26);
+  border-radius: 7px;
+  padding: 0 9px;
+  background: rgba(103, 232, 249, 0.08);
+  color: #d8fbff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.transactionCaseLink:hover {
+  border-color: rgba(120, 255, 185, 0.5);
+  background: rgba(120, 255, 185, 0.12);
+}
+
+.transactionCaseLink:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.emptyTransactions {
+  margin: 0;
+  color: #93a4bc;
+}
+
 .limitNote {
   margin: 24px 0 0;
   color: #8d9bb0;
@@ -1397,6 +2635,19 @@ button {
 }
 
 @media (max-width: 900px) {
+  .topbar {
+    height: auto;
+    min-height: 72px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .topbarControls {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
   .hero {
     grid-template-columns: 1fr;
     min-height: auto;
@@ -1464,6 +2715,26 @@ button {
     max-height: 58vh;
   }
 
+  .comparisonGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .accountGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminMetricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adminTrafficGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparisonFigure img {
+    height: min(48vh, 520px);
+  }
+
   .previewContent {
     overflow: visible;
   }
@@ -1471,11 +2742,16 @@ button {
 
 @media (max-width: 640px) {
   .topbar {
-    height: 64px;
+    min-height: 64px;
   }
 
   .brand {
     max-width: 205px;
+  }
+
+  .topbar nav {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .topbar nav a {
@@ -1483,16 +2759,37 @@ button {
   }
 
   .topbarControls {
+    justify-content: flex-start;
+    width: 100%;
     gap: 6px;
   }
 
-  .languageSwitch {
+  .accountButton,
+  .dropdownTrigger,
+  .userTrigger {
     min-height: 38px;
   }
 
-  .languageSwitch button {
-    min-width: 36px;
-    padding: 0 7px;
+  .accountButton,
+  .userMenu {
+    margin-left: auto;
+  }
+
+  .dropdownTrigger {
+    min-width: 70px;
+    padding: 0 10px;
+  }
+
+  .userTrigger {
+    padding-right: 9px;
+  }
+
+  .dropdownMenu {
+    max-width: calc(100vw - 24px);
+  }
+
+  .userDropdown {
+    min-width: min(292px, calc(100vw - 24px));
   }
 
   .hero {
@@ -1584,6 +2881,14 @@ button {
     padding: 12px;
   }
 
+  .previewMedia.hasComparison {
+    padding: 12px;
+  }
+
+  .comparisonFigure img {
+    height: min(44vh, 420px);
+  }
+
   .previewContent {
     padding: 20px 16px;
   }
@@ -1600,5 +2905,67 @@ button {
 
   .previewColumns {
     grid-template-columns: 1fr;
+  }
+
+  .authDialog,
+  .adminDialog,
+  .accountDialog,
+  .billingDialog {
+    max-height: calc(100vh - 20px);
+  }
+
+  .authDialog,
+  .adminDialog,
+  .accountDialog,
+  .billingDialog {
+    padding: 20px 16px;
+  }
+
+  .adminHeader {
+    flex-direction: column;
+  }
+
+  .adminHeaderActions {
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .adminRangeToggle {
+    flex: 1 1 auto;
+  }
+
+  .adminRangeToggle button {
+    flex: 1;
+  }
+
+  .adminMetricGrid,
+  .adminTrafficGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .accountHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .adminHeader button {
+    width: 100%;
+  }
+
+  .adminAdjustForm,
+  .accountMetrics,
+  .billingSummary,
+  .billingSections,
+  .transactionItem {
+    grid-template-columns: 1fr;
+  }
+
+  .billingState {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .billingState button,
+  .transactionItem {
+    width: 100%;
   }
 }

@@ -1,90 +1,18 @@
-import crypto from 'node:crypto';
+import {
+  getAuthContext,
+  getProfileById,
+  isSupabaseServerConfigured
+} from './_lib/supabase.js';
 
-const COOKIE_NAME = 'gpt_image_free_id';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
-const ANON_TTL = COOKIE_MAX_AGE;
-const IP_DAY_TTL = 60 * 60 * 30;
-const PENDING_TTL = 5 * 60;
 const MAX_PROMPT_LENGTH = 6000;
-const DEFAULT_CIYUAN_BASE_URL = 'https://ciyuan.it.com';
+const DEFAULT_CIYUAN_BASE_URL = 'https://ciyuan.today';
 
-function json(res, status, payload, extraHeaders = {}) {
-  for (const [key, value] of Object.entries(extraHeaders)) {
-    res.setHeader(key, value);
-  }
+function json(res, status, payload) {
   res.status(status).json(payload);
 }
 
-function parseCookies(cookieHeader = '') {
-  return cookieHeader
-    .split(';')
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .reduce((cookies, part) => {
-      const index = part.indexOf('=');
-      if (index === -1) return cookies;
-      const key = part.slice(0, index);
-      const value = part.slice(index + 1);
-      cookies[key] = decodeURIComponent(value);
-      return cookies;
-    }, {});
-}
-
-function getOrCreateAnonId(req) {
-  const cookies = parseCookies(req.headers.cookie || '');
-  const existing = cookies[COOKIE_NAME];
-  if (existing && /^[a-f0-9-]{32,64}$/i.test(existing)) {
-    return { anonId: existing, shouldSetCookie: false };
-  }
-  return { anonId: crypto.randomUUID(), shouldSetCookie: true };
-}
-
-function buildCookie(anonId) {
-  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  return `${COOKIE_NAME}=${encodeURIComponent(anonId)}; Max-Age=${COOKIE_MAX_AGE}; Path=/; HttpOnly; SameSite=Lax${secure}`;
-}
-
-function getClientIp(req) {
-  const forwardedFor = req.headers['x-forwarded-for'];
-  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
-    return forwardedFor.split(',')[0].trim();
-  }
-  const realIp = req.headers['x-real-ip'];
-  if (typeof realIp === 'string' && realIp.trim()) {
-    return realIp.trim();
-  }
-  return req.socket?.remoteAddress || 'unknown';
-}
-
-function getRedisConfig() {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return { url: url.replace(/\/$/, ''), token };
-}
-
 function isServerConfigured() {
-  return Boolean(process.env.CIYUAN_API_KEY && getRedisConfig());
-}
-
-async function redisCommand(command) {
-  const config = getRedisConfig();
-  if (!config) throw new Error('Redis is not configured');
-
-  const response = await fetch(config.url, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(command)
-  });
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok || payload.error) {
-    throw new Error(payload.error || `Redis command failed with status ${response.status}`);
-  }
-  return payload.result;
+  return Boolean(process.env.CIYUAN_API_KEY && isSupabaseServerConfigured());
 }
 
 async function readBody(req) {
@@ -100,52 +28,99 @@ async function readBody(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
-function buildKeys(anonId, ip) {
-  const day = new Date().toISOString().slice(0, 10);
-  const ipHash = crypto.createHash('sha256').update(ip).digest('hex').slice(0, 24);
+function normalizeReservation(data) {
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row?.reservation_id) return null;
   return {
-    anonKey: `freegen:v1:anon:${anonId}`,
-    ipDayKey: `freegen:v1:ip:${ipHash}:${day}`,
-    pendingAnonKey: `freegen:v1:pending:anon:${anonId}`,
-    pendingIpKey: `freegen:v1:pending:ip:${ipHash}:${day}`
+    reservationId: row.reservation_id,
+    usedFreeGeneration: Boolean(row.used_free_generation),
+    creditAmount: Number(row.credit_amount || 0),
+    freeGenerationsUsed: Number(row.free_generations_used || 0),
+    creditBalance: Number(row.credit_balance || 0)
   };
 }
 
-async function hasUsedFreeGeneration(keys) {
-  const [anonUsed, ipUsed] = await Promise.all([
-    redisCommand(['GET', keys.anonKey]),
-    redisCommand(['GET', keys.ipDayKey])
-  ]);
-  return Boolean(anonUsed || ipUsed);
+function profileFromReservation(profile, reservation) {
+  if (!profile || !reservation) return profile;
+  const usage = profile.usage || {};
+  return {
+    ...profile,
+    creditBalance: reservation.creditBalance,
+    freeGenerationsUsed: reservation.freeGenerationsUsed,
+    freeUsed: reservation.freeGenerationsUsed >= 1,
+    usage: {
+      ...usage,
+      totalGenerations: Number(usage.totalGenerations || 0) + 1,
+      totalGenerationCredits: Number(usage.totalGenerationCredits || 0) + Number(reservation.creditAmount || 0)
+    }
+  };
 }
 
-async function reserveGeneration(keys) {
-  const anonReserved = await redisCommand(['SET', keys.pendingAnonKey, '1', 'NX', 'EX', PENDING_TTL]);
-  if (anonReserved !== 'OK') return false;
+async function reserveGeneration(client, userId, caseId, prompt) {
+  const { data, error } = await client.rpc('reserve_generation_usage', {
+    p_user_id: userId,
+    p_case_id: caseId,
+    p_prompt: prompt,
+    p_force_credit: false
+  });
 
-  const ipReserved = await redisCommand(['SET', keys.pendingIpKey, '1', 'NX', 'EX', PENDING_TTL]);
-  if (ipReserved !== 'OK') {
-    await redisCommand(['DEL', keys.pendingAnonKey]).catch(() => null);
-    return false;
+  if (error) {
+    const normalizedMessage = String(error.message || error.details || '').toUpperCase();
+    if (normalizedMessage.includes('CREDITS_REQUIRED')) {
+      const limitError = new Error('CREDITS_REQUIRED');
+      limitError.code = 'CREDITS_REQUIRED';
+      throw limitError;
+    }
+    throw error;
   }
 
-  return true;
+  const reservation = normalizeReservation(data);
+  if (!reservation) throw new Error('RESERVATION_FAILED');
+  return reservation;
 }
 
-async function markFreeGenerationUsed(keys) {
-  await Promise.all([
-    redisCommand(['SET', keys.anonKey, '1', 'EX', ANON_TTL]),
-    redisCommand(['SET', keys.ipDayKey, '1', 'EX', IP_DAY_TTL]),
-    redisCommand(['DEL', keys.pendingAnonKey]),
-    redisCommand(['DEL', keys.pendingIpKey])
-  ]);
+async function reserveCreditGeneration(client, userId, caseId, prompt) {
+  const { data, error } = await client.rpc('reserve_generation_usage', {
+    p_user_id: userId,
+    p_case_id: caseId,
+    p_prompt: prompt,
+    p_force_credit: true
+  });
+
+  if (error) {
+    const normalizedMessage = String(error.message || error.details || '').toUpperCase();
+    if (normalizedMessage.includes('CREDITS_REQUIRED')) {
+      const limitError = new Error('CREDITS_REQUIRED');
+      limitError.code = 'CREDITS_REQUIRED';
+      throw limitError;
+    }
+    throw error;
+  }
+
+  const reservation = normalizeReservation(data);
+  if (!reservation) throw new Error('RESERVATION_FAILED');
+  return reservation;
 }
 
-async function releaseGeneration(keys) {
-  await Promise.all([
-    redisCommand(['DEL', keys.pendingAnonKey]).catch(() => null),
-    redisCommand(['DEL', keys.pendingIpKey]).catch(() => null)
-  ]);
+async function completeReservation(client, reservationId) {
+  const { error } = await client.rpc('complete_generation_reservation', {
+    p_reservation_id: reservationId
+  });
+  if (error) throw error;
+}
+
+async function releaseReservation(client, reservationId, errorCode) {
+  if (!reservationId) return;
+  const { error } = await client.rpc('release_generation_reservation', {
+    p_reservation_id: reservationId,
+    p_error_code: errorCode || 'GENERATION_FAILED'
+  });
+  if (error) {
+    console.warn('Failed to release generation reservation', {
+      reservationId,
+      message: String(error?.message || 'unknown').slice(0, 240)
+    });
+  }
 }
 
 async function generateImage(prompt) {
@@ -170,7 +145,12 @@ async function generateImage(prompt) {
   const b64 = payload?.data?.[0]?.b64_json;
 
   if (!response.ok || !b64) {
-    throw new Error(payload?.error?.message || `Image generation failed with status ${response.status}`);
+    const message = payload?.error?.message || payload?.message || `Image generation failed with status ${response.status}`;
+    const error = new Error(message);
+    error.status = response.status;
+    error.code = payload?.error?.code || payload?.code;
+    error.type = payload?.error?.type || payload?.type;
+    throw error;
   }
 
   return `data:image/jpeg;base64,${b64}`;
@@ -182,51 +162,84 @@ export default async function handler(req, res) {
     return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
   }
 
-  const { anonId, shouldSetCookie } = getOrCreateAnonId(req);
-  const cookieHeaders = shouldSetCookie ? { 'Set-Cookie': buildCookie(anonId) } : {};
-
   if (!isServerConfigured()) {
-    return json(res, 500, { ok: false, error: 'SERVER_NOT_CONFIGURED' }, cookieHeaders);
+    return json(res, 500, { ok: false, error: 'SERVER_NOT_CONFIGURED' });
   }
 
-  const keys = buildKeys(anonId, getClientIp(req));
+  const auth = await getAuthContext(req, { allowAnonymous: req.method === 'GET' });
+  if (auth.error) {
+    return json(res, auth.status || 401, {
+      ok: false,
+      error: auth.error,
+      loginRequired: auth.error === 'AUTH_REQUIRED'
+    });
+  }
+
+  if (req.method === 'GET') {
+    return json(res, 200, {
+      ok: true,
+      authRequired: !auth.profile,
+      freeUsed: Boolean(auth.profile?.freeUsed),
+      user: auth.profile || null
+    });
+  }
+
+  if (!auth.user || !auth.profile) {
+    return json(res, 401, { ok: false, error: 'AUTH_REQUIRED', loginRequired: true });
+  }
+
+  let body;
+  try {
+    body = await readBody(req);
+  } catch {
+    return json(res, 400, { ok: false, error: 'INVALID_PROMPT' });
+  }
+
+  const prompt = String(body.prompt || '').trim();
+  const caseId = Number(body.caseId);
+  if (!prompt || prompt.length > MAX_PROMPT_LENGTH || !Number.isFinite(caseId)) {
+    return json(res, 400, { ok: false, error: 'INVALID_PROMPT' });
+  }
+
+  let reservation;
+  try {
+    reservation = auth.profile.isSuperAdmin
+      ? await reserveCreditGeneration(auth.client, auth.user.id, caseId, prompt)
+      : await reserveGeneration(auth.client, auth.user.id, caseId, prompt);
+  } catch (error) {
+    if (error?.code === 'CREDITS_REQUIRED') {
+      return json(res, 402, { ok: false, error: 'CREDITS_REQUIRED' });
+    }
+    console.warn('Failed to reserve generation usage', {
+      userId: auth.user.id,
+      message: String(error?.message || 'unknown').slice(0, 240)
+    });
+    return json(res, 500, { ok: false, error: 'GENERATION_FAILED' });
+  }
 
   try {
-    if (req.method === 'GET') {
-      const freeUsed = await hasUsedFreeGeneration(keys);
-      return json(res, 200, { ok: true, freeUsed }, cookieHeaders);
-    }
+    const image = await generateImage(prompt);
+    await completeReservation(auth.client, reservation.reservationId);
+    return json(res, 200, {
+      ok: true,
+      image,
+      user: profileFromReservation(auth.profile, reservation)
+    });
+  } catch (error) {
+    console.warn('Image generation failed', {
+      status: error?.status || null,
+      code: error?.code || null,
+      type: error?.type || null,
+      message: String(error?.message || 'unknown').slice(0, 240)
+    });
 
-    let body;
-    try {
-      body = await readBody(req);
-    } catch {
-      return json(res, 400, { ok: false, error: 'INVALID_PROMPT' }, cookieHeaders);
-    }
+    const errorCode = error?.status === 429 ? 'UPSTREAM_BUSY' : 'GENERATION_FAILED';
+    await releaseReservation(auth.client, reservation.reservationId, errorCode);
 
-    const prompt = String(body.prompt || '').trim();
-    const caseId = Number(body.caseId);
-    if (!prompt || prompt.length > MAX_PROMPT_LENGTH || !Number.isFinite(caseId)) {
-      return json(res, 400, { ok: false, error: 'INVALID_PROMPT' }, cookieHeaders);
+    const refreshedProfile = await getProfileById(auth.user.id).catch(() => null);
+    if (error?.status === 429) {
+      return json(res, 503, { ok: false, error: 'UPSTREAM_BUSY', user: refreshedProfile });
     }
-
-    if (await hasUsedFreeGeneration(keys)) {
-      return json(res, 402, { ok: false, error: 'FREE_LIMIT_REACHED' }, cookieHeaders);
-    }
-
-    if (!(await reserveGeneration(keys))) {
-      return json(res, 402, { ok: false, error: 'FREE_LIMIT_REACHED' }, cookieHeaders);
-    }
-
-    try {
-      const image = await generateImage(prompt);
-      await markFreeGenerationUsed(keys);
-      return json(res, 200, { ok: true, image }, cookieHeaders);
-    } catch {
-      await releaseGeneration(keys);
-      return json(res, 502, { ok: false, error: 'GENERATION_FAILED' }, cookieHeaders);
-    }
-  } catch {
-    return json(res, 500, { ok: false, error: 'SERVER_NOT_CONFIGURED' }, cookieHeaders);
+    return json(res, 502, { ok: false, error: 'GENERATION_FAILED', user: refreshedProfile });
   }
 }

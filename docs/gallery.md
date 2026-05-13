@@ -1,10 +1,10 @@
 ## 🖼️ 魔法画廊总览
 
-完整画廊已按 GitHub 渲染体积拆成两册，避免页面被截断；当前总案例数为 405。
+完整画廊已按 GitHub 渲染体积拆成两册，避免页面被截断；当前总案例数为 427。
 
 - [返回 README 首页](../README.md)
 - [Part 1：例 1-165](./gallery-part-1.md)
-- [Part 2：例 166-405](./gallery-part-2.md)
+- [Part 2：例 166-427](./gallery-part-2.md)
 - [工业级提示词模板与防坑指南](./templates.md)
 - [声明、Star 趋势图与公众号](./disclaimer.md)
 
@@ -73,25 +73,47 @@
 - [例 403：小红书数字破屏 3D 女孩](./gallery-part-2.md#case-403)
 - [例 404：豪华社媒破屏商业广告](./gallery-part-2.md#case-404)
 - [例 405：可爱纸艺风照片重绘](./gallery-part-2.md#case-405)
+- [例 406：巨型游戏手柄街头 Campaign](./gallery-part-2.md#case-406)
+- [例 407：Neuro-AI 混合系统信息图](./gallery-part-2.md#case-407)
+- [例 408：Cozy Academia 学习手记](./gallery-part-2.md#case-408)
+- [例 409：拙劣 MS Paint 风重绘](./gallery-part-2.md#case-409)
+- [例 410：夸张动漫风主体重绘](./gallery-part-2.md#case-410)
+- [例 411：极简建筑地标海报](./gallery-part-2.md#case-411)
+- [例 412：彩色按钮时尚 Campaign](./gallery-part-2.md#case-412)
+- [例 413：当代舞现场 Storyboard](./gallery-part-2.md#case-413)
+- [例 414：室内晨间写实摄影](./gallery-part-2.md#case-414)
+- [例 415：东方神话人物志百科海报](./gallery-part-2.md#case-415)
+- [例 416：Earth Signs 角色 Scrapbook](./gallery-part-2.md#case-416)
+- [例 417：复古印尼猫薄荷广告](./gallery-part-2.md#case-417)
+- [例 418：中世纪城市旅行海报](./gallery-part-2.md#case-418)
+- [例 419：可颂烘焙流程 Storyboard](./gallery-part-2.md#case-419)
+- [例 420：红跑道低角度夏日人像](./gallery-part-2.md#case-420)
+- [例 421：iPhone 屏幕遮脸创意人像](./gallery-part-2.md#case-421)
+- [例 422：冬季生存惊悚 Storyboard](./gallery-part-2.md#case-422)
+- [例 423：日系手绘涂鸦半身插画](./gallery-part-2.md#case-423)
+- [例 424：FMCG 棒棒糖霓虹广告](./gallery-part-2.md#case-424)
+- [例 425：黑白时尚人像拼贴海报](./gallery-part-2.md#case-425)
+- [例 426：日韩咖啡馆情侣写真](./gallery-part-2.md#case-426)
+- [例 427：9-frame 时尚人像拼贴](./gallery-part-2.md#case-427)
 
 ## 分册说明
 
 - `gallery-part-1.md`：例 1-165，覆盖信息图、界面、海报、摄影、插画等基础主流类型。
-- `gallery-part-2.md`：例 166-405，包含更多品牌、卡牌、直播截图、国风、商业视觉、作者新增实测与社区案例。
+- `gallery-part-2.md`：例 166-427，包含更多品牌、卡牌、直播截图、国风、商业视觉、作者新增实测与社区案例。
 
 ## 分类概览
 
 - UI与界面：63
-- 图表与信息可视化：44
-- 海报与排版：65
-- 商品与电商：27
+- 图表与信息可视化：45
+- 海报与排版：69
+- 商品与电商：28
 - 品牌与标志：20
-- 建筑与空间：9
-- 摄影与写实：43
-- 插画与艺术：36
-- 人物与角色：19
-- 场景与叙事：13
-- 历史与古风题材：15
+- 建筑与空间：10
+- 摄影与写实：51
+- 插画与艺术：39
+- 人物与角色：20
+- 场景与叙事：16
+- 历史与古风题材：16
 - 文档与出版物：9
 - 其他应用场景：29
 
@@ -167,7 +189,7 @@
 
 <a name="cat-infographic"></a>
 
-### 📊 图表与信息可视化 · 44 cases
+### 📊 图表与信息可视化 · 45 cases
 
 - [例 8：科普百科图](./gallery-part-1.md#case-8)
 - [例 14：信息图可视化设计](./gallery-part-1.md#case-14)
@@ -213,10 +235,11 @@
 - [例 364：奢华个人色彩档案信息图](./gallery-part-2.md#case-364)
 - [例 375：古希腊三哲时间轴城市图](./gallery-part-2.md#case-375)
 - [例 380：冠状病毒尺度缩放科学信息图](./gallery-part-2.md#case-380)
+- [例 407：Neuro-AI 混合系统信息图](./gallery-part-2.md#case-407)
 
 <a name="cat-poster"></a>
 
-### 📰 海报与排版 · 65 cases
+### 📰 海报与排版 · 69 cases
 
 - [例 3：足球主题电影海报](./gallery-part-1.md#case-3)
 - [例 5：主题海报版式设计](./gallery-part-1.md#case-5)
@@ -283,10 +306,13 @@
 - [例 389：Transparent Labs Hydrate 健身补剂 Campaign](./gallery-part-2.md#case-389)
 - [例 396：龙类物种复古百科海报](./gallery-part-2.md#case-396)
 - [例 401：Lost in 国家旅行海报拼贴](./gallery-part-2.md#case-401)
+- [例 406：巨型游戏手柄街头 Campaign](./gallery-part-2.md#case-406)
+- [例 417：复古印尼猫薄荷广告](./gallery-part-2.md#case-417)
+- [例 418：中世纪城市旅行海报](./gallery-part-2.md#case-418)
 
 <a name="cat-product"></a>
 
-### 🛍️ 商品与电商 · 27 cases
+### 🛍️ 商品与电商 · 28 cases
 
 - [例 17：界面交互设计图](./gallery-part-1.md#case-17)
 - [例 33：电商商品展示设计](./gallery-part-1.md#case-33)
@@ -315,6 +341,7 @@
 - [例 368：印度餐厅菜单改造宣传图](./gallery-part-2.md#case-368)
 - [例 370：Crumple Chair 概念沙发研发板](./gallery-part-2.md#case-370)
 - [例 373：高端肉类海鲜品牌英雄图](./gallery-part-2.md#case-373)
+- [例 424：FMCG 棒棒糖霓虹广告](./gallery-part-2.md#case-424)
 
 <a name="cat-brand"></a>
 
@@ -343,7 +370,7 @@
 
 <a name="cat-architecture"></a>
 
-### 🏛️ 建筑与空间 · 9 cases
+### 🏛️ 建筑与空间 · 10 cases
 
 - [例 11：一张手绘风格的城市美食地图，以台州为主题](./gallery-part-1.md#case-11)
 - [例 18：信息图可视化设计](./gallery-part-1.md#case-18)
@@ -354,10 +381,11 @@
 - [例 331：西安手绘水彩城市地图](./gallery-part-2.md#case-331)
 - [例 369：明洞旅游区域地图](./gallery-part-2.md#case-369)
 - [例 381：90 年代公寓场景参考板](./gallery-part-2.md#case-381)
+- [例 411：极简建筑地标海报](./gallery-part-2.md#case-411)
 
 <a name="cat-photo"></a>
 
-### 📷 摄影与写实 · 43 cases
+### 📷 摄影与写实 · 51 cases
 
 - [例 24：漫画分镜叙事设计](./gallery-part-1.md#case-24)
 - [例 26：建筑空间场景图](./gallery-part-1.md#case-26)
@@ -402,10 +430,18 @@
 - [例 383：AI 日常生活 iPhone 抓拍](./gallery-part-2.md#case-383)
 - [例 393：Y2K 金色时刻人像](./gallery-part-2.md#case-393)
 - [例 399：](./gallery-part-2.md#case-399)
+- [例 408：Cozy Academia 学习手记](./gallery-part-2.md#case-408)
+- [例 412：彩色按钮时尚 Campaign](./gallery-part-2.md#case-412)
+- [例 414：室内晨间写实摄影](./gallery-part-2.md#case-414)
+- [例 420：红跑道低角度夏日人像](./gallery-part-2.md#case-420)
+- [例 421：iPhone 屏幕遮脸创意人像](./gallery-part-2.md#case-421)
+- [例 425：黑白时尚人像拼贴海报](./gallery-part-2.md#case-425)
+- [例 426：日韩咖啡馆情侣写真](./gallery-part-2.md#case-426)
+- [例 427：9-frame 时尚人像拼贴](./gallery-part-2.md#case-427)
 
 <a name="cat-illustration"></a>
 
-### 🎨 插画与艺术 · 36 cases
+### 🎨 插画与艺术 · 39 cases
 
 - [例 6：插画艺术创作图](./gallery-part-1.md#case-6)
 - [例 22：插画艺术风格创作](./gallery-part-1.md#case-22)
@@ -443,10 +479,13 @@
 - [例 356：过度思考超现实街头 Campaign](./gallery-part-2.md#case-356)
 - [例 374：彩色潦草小狗线条风格重绘](./gallery-part-2.md#case-374)
 - [例 405：可爱纸艺风照片重绘](./gallery-part-2.md#case-405)
+- [例 409：拙劣 MS Paint 风重绘](./gallery-part-2.md#case-409)
+- [例 410：夸张动漫风主体重绘](./gallery-part-2.md#case-410)
+- [例 423：日系手绘涂鸦半身插画](./gallery-part-2.md#case-423)
 
 <a name="cat-character"></a>
 
-### 🧍 人物与角色 · 19 cases
+### 🧍 人物与角色 · 20 cases
 
 - [例 25：综合应用场景图](./gallery-part-1.md#case-25)
 - [例 27：人物角色设定图](./gallery-part-1.md#case-27)
@@ -467,10 +506,11 @@
 - [例 384：十国传统服饰时尚拼贴](./gallery-part-2.md#case-384)
 - [例 397：](./gallery-part-2.md#case-397)
 - [例 398：](./gallery-part-2.md#case-398)
+- [例 416：Earth Signs 角色 Scrapbook](./gallery-part-2.md#case-416)
 
 <a name="cat-scene"></a>
 
-### 🎬 场景与叙事 · 13 cases
+### 🎬 场景与叙事 · 16 cases
 
 - [例 182：千禧年日系校园喜剧场景](./gallery-part-2.md#case-182)
 - [例 208：樱花树下害羞双马尾少女](./gallery-part-2.md#case-208)
@@ -485,10 +525,13 @@
 - [例 392：头发里的微型城市](./gallery-part-2.md#case-392)
 - [例 394：中世纪村庄双精灵冒险者](./gallery-part-2.md#case-394)
 - [例 395：骑士法师大战石像魔像](./gallery-part-2.md#case-395)
+- [例 413：当代舞现场 Storyboard](./gallery-part-2.md#case-413)
+- [例 419：可颂烘焙流程 Storyboard](./gallery-part-2.md#case-419)
+- [例 422：冬季生存惊悚 Storyboard](./gallery-part-2.md#case-422)
 
 <a name="cat-history"></a>
 
-### 🏮 历史与古风题材 · 15 cases
+### 🏮 历史与古风题材 · 16 cases
 
 - [例 44：古风历史题材图](./gallery-part-1.md#case-44)
 - [例 167：大唐玄武门之变的朋友圈](./gallery-part-2.md#case-167)
@@ -505,6 +548,7 @@
 - [例 292：明朝登基宝玉的推文页面](./gallery-part-2.md#case-292)
 - [例 337：《短歌行》诗词意境图](./gallery-part-2.md#case-337)
 - [例 338：《赤壁怀古》长卷图](./gallery-part-2.md#case-338)
+- [例 415：东方神话人物志百科海报](./gallery-part-2.md#case-415)
 
 <a name="cat-document"></a>
 
