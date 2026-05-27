@@ -12,6 +12,7 @@ import {
   Crown,
   Eye,
   Github,
+  Heart,
   ImageIcon,
   LoaderCircle,
   LogIn,
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 import './styles.css';
 import { isSupabaseConfigured, supabase } from './supabaseClient';
+import wechatCommunityImage from './assets/wechat-community.jpg';
 import skillExampleImage from '../agents/skills/gpt-image-2-style-library/assets/city-life-system-map.png';
 
 const fallbackRepoUrl = 'https://github.com/freestylefly/awesome-gpt-image-2';
@@ -45,10 +47,12 @@ const copy = {
     navCases: 'Cases',
     navSkill: 'Skill',
     navTemplates: 'Templates',
+    navCommunity: 'Community',
+    communityQrAlt: 'WeChat community invite card for GPT-Image2',
     eyebrow: 'Live GPT-Image2 prompt gallery',
     title: 'From viral images to reusable prompts.',
     subtitle:
-      'A visual front door for the awesome-gpt-image-2 repository: copy production-ready prompts, filter by style or scene, and jump straight into the GitHub source.',
+      'A visual workspace for GPT-Image2 creation: browse real cases, copy prompts, test image generation, explore industrial templates, and join the creator community.',
     explore: 'Explore cases',
     githubProject: 'GitHub project',
     cases: 'cases',
@@ -86,6 +90,15 @@ const copy = {
     copied: 'Copied',
     copyPrompt: 'Copy Prompt',
     copyTemplatePrompt: 'Copy Template',
+    favorite: 'Favorite',
+    favorited: 'Favorited',
+    unfavorite: 'Remove Favorite',
+    myFavorites: 'My Favorites',
+    noFavorites: 'No favorites yet.',
+    signInToFavorite: 'Sign in to save favorite cases.',
+    favoriteSaved: 'Favorite saved.',
+    favoriteRemoved: 'Favorite removed.',
+    favoriteFailed: 'Favorite update failed. Please try again.',
     closePreview: 'Close preview',
     viewDetails: 'View Details',
     generateTest: 'Generate Test',
@@ -173,14 +186,24 @@ const copy = {
     businessMetrics: 'Business',
     analyticsNotConfigured: 'GA4 is not configured yet. Business metrics are still available.',
     analyticsLoadFailed: 'GA4 data could not be loaded. Business metrics are still available.',
+    invalidDateRange: 'Choose a date range within 180 days.',
+    rangeToday: 'Today',
     range7d: '7 days',
     range30d: '30 days',
+    range90d: '90 days',
+    customRange: 'Custom',
+    startDate: 'Start date',
+    endDate: 'End date',
+    applyRange: 'Apply',
+    selectedRange: 'Selected range',
     pv: 'PV',
     uv: 'UV',
+    visits: 'Visits',
     sessions: 'Sessions',
     newUsers: 'New users',
     registeredUsers: 'Registered users',
     newRegistrations: 'New registrations',
+    newMembers: 'New members',
     activeMemberships: 'Active members',
     totalGenerationsMetric: 'Total generations',
     rangeGenerations: 'Range generations',
@@ -192,6 +215,9 @@ const copy = {
     purchasedCredits: 'Purchased credits',
     membershipCredits: 'Membership credits',
     dailyTraffic: 'Daily traffic',
+    trafficTrend: 'Traffic trend',
+    businessTrend: 'Business trend',
+    registrations: 'Registrations',
     topPages: 'Top pages',
     channels: 'Channels',
     countries: 'Countries',
@@ -225,10 +251,12 @@ const copy = {
     navCases: '案例',
     navSkill: '技能',
     navTemplates: '模板',
+    navCommunity: '交流群',
+    communityQrAlt: 'GPT-Image2 微信交流群邀请卡',
     eyebrow: '实时更新的 GPT-Image2 提示词画廊',
     title: '从爆款图片，到可复用 Prompt。',
     subtitle:
-      '这是 awesome-gpt-image-2 的可视化入口：复制可直接复用的 Prompt，按风格或场景筛选，并一键跳转到 GitHub 源项目。',
+      '一个面向 GPT-Image2 创作的可视化工作台：浏览真实案例、复制 Prompt、在线测试生图、查看工业级模板，并加入创作者交流群。',
     explore: '浏览案例',
     githubProject: 'GitHub 项目',
     cases: '个案例',
@@ -266,8 +294,17 @@ const copy = {
     copied: '已复制',
     copyPrompt: '复制 Prompt',
     copyTemplatePrompt: '复制模板',
+    favorite: '收藏',
+    favorited: '已收藏',
+    unfavorite: '取消收藏',
+    myFavorites: '我的收藏',
+    noFavorites: '暂无收藏案例。',
+    signInToFavorite: '登录后即可收藏案例。',
+    favoriteSaved: '已加入收藏。',
+    favoriteRemoved: '已取消收藏。',
+    favoriteFailed: '收藏更新失败，请稍后再试。',
     closePreview: '关闭预览',
-    viewDetails: '查看详情',
+    viewDetails: '详情',
     generateTest: '生成测试',
     generateImage: '生成图片',
     generating: '生成中...',
@@ -353,14 +390,24 @@ const copy = {
     businessMetrics: '业务数据',
     analyticsNotConfigured: 'GA4 还没有配置，当前先展示业务数据。',
     analyticsLoadFailed: 'GA4 数据暂时读取失败，当前先展示业务数据。',
+    invalidDateRange: '请选择 180 天以内的日期范围。',
+    rangeToday: '今天',
     range7d: '近 7 天',
     range30d: '近 30 天',
+    range90d: '近 90 天',
+    customRange: '自定义',
+    startDate: '开始日期',
+    endDate: '结束日期',
+    applyRange: '应用',
+    selectedRange: '当前区间',
     pv: 'PV',
     uv: 'UV',
+    visits: '访问数',
     sessions: 'Sessions',
     newUsers: '新访客',
     registeredUsers: '注册用户',
     newRegistrations: '新增注册',
+    newMembers: '新增会员',
     activeMemberships: '活跃会员',
     totalGenerationsMetric: '总生图量',
     rangeGenerations: '区间生图量',
@@ -372,6 +419,9 @@ const copy = {
     purchasedCredits: '购买积分',
     membershipCredits: '会员发放积分',
     dailyTraffic: '每日流量',
+    trafficTrend: '流量趋势',
+    businessTrend: '业务趋势',
+    registrations: '注册',
     topPages: '热门页面',
     channels: '来源渠道',
     countries: '国家/地区',
@@ -469,6 +519,8 @@ const GENERATED_TESTS_STORAGE_KEY = 'gpt-image-2-generated-tests:v1';
 const MAX_SAVED_GENERATIONS = 12;
 const HERO_CASE_COUNT = 5;
 const HOT_STRIP_CASE_COUNT = 8;
+let bodyScrollLockCount = 0;
+let bodyScrollLockState = null;
 
 function pagePathWithHash() {
   return `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -513,6 +565,45 @@ function useGaPageViews() {
   }, []);
 }
 
+function useBodyScrollLock(active) {
+  useEffect(() => {
+    if (!active) return undefined;
+
+    if (bodyScrollLockCount === 0) {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      bodyScrollLockState = {
+        scrollY,
+        bodyOverflow: document.body.style.overflow,
+        bodyPosition: document.body.style.position,
+        bodyTop: document.body.style.top,
+        bodyWidth: document.body.style.width,
+        htmlOverflow: document.documentElement.style.overflow
+      };
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    }
+
+    bodyScrollLockCount += 1;
+
+    return () => {
+      bodyScrollLockCount = Math.max(0, bodyScrollLockCount - 1);
+      if (bodyScrollLockCount > 0 || !bodyScrollLockState) return;
+
+      const { scrollY, bodyOverflow, bodyPosition, bodyTop, bodyWidth, htmlOverflow } = bodyScrollLockState;
+      document.documentElement.style.overflow = htmlOverflow;
+      document.body.style.overflow = bodyOverflow;
+      document.body.style.position = bodyPosition;
+      document.body.style.top = bodyTop;
+      document.body.style.width = bodyWidth;
+      bodyScrollLockState = null;
+      window.scrollTo(0, scrollY);
+    };
+  }, [active]);
+}
+
 function formatNumber(value) {
   return new Intl.NumberFormat('en-US').format(Number(value || 0));
 }
@@ -526,6 +617,29 @@ function formatShortDate(value, language) {
     month: 'short',
     day: 'numeric'
   });
+}
+
+function formatRangeDate(value, language) {
+  if (!value) return '-';
+  return new Date(`${value}T00:00:00`).toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+function dateInputValue(daysAgo = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function firstNumber(...values) {
+  const value = values.find((item) => item !== undefined && item !== null);
+  return Number(value || 0);
 }
 
 function percentOf(value, max) {
@@ -567,6 +681,16 @@ function saveGeneratedTest(caseId, entry) {
       // visible for the current dialog state when persistence is unavailable.
     }
   }
+}
+
+function normalizeFavoriteRows(favorites = []) {
+  const rows = Array.isArray(favorites) ? favorites : [];
+  return rows
+    .map((favorite) => ({
+      caseId: Number(favorite.caseId || favorite.case_id),
+      createdAt: favorite.createdAt || favorite.created_at || ''
+    }))
+    .filter((favorite) => Number.isInteger(favorite.caseId) && favorite.caseId > 0);
 }
 
 function takeDistinctCases(cases, count, excludedIds = new Set()) {
@@ -936,6 +1060,49 @@ function LanguageSwitch({ language, setLanguage }) {
   );
 }
 
+function WeChatIcon({ size = 17 }) {
+  return (
+    <svg className="wechatNavIcon" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M9.15 4.25c-4.16 0-7.45 2.72-7.45 6.12 0 1.93 1.08 3.62 2.76 4.74l-.62 2.08a.44.44 0 0 0 .62.52l2.46-1.26c.7.18 1.45.28 2.23.28.4 0 .79-.03 1.17-.08a5.31 5.31 0 0 1-.37-1.96c0-3.2 3.18-5.78 7.1-5.78.27 0 .53.01.79.04-.75-2.7-4.26-4.7-8.69-4.7Zm-2.35 4.9a.93.93 0 1 0 0-1.86.93.93 0 0 0 0 1.86Zm4.74 0a.93.93 0 1 0 0-1.86.93.93 0 0 0 0 1.86Zm5.51 1.32c-3.24 0-5.86 2.05-5.86 4.58 0 2.54 2.62 4.59 5.86 4.59.58 0 1.13-.07 1.66-.19l1.88.96a.37.37 0 0 0 .52-.44l-.48-1.59c1.39-.85 2.27-2.04 2.27-3.33 0-2.53-2.62-4.58-5.85-4.58Zm-1.92 3.67a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm3.86 0a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function CommunityNavItem({ language }) {
+  const t = copy[language];
+  const [open, setOpen] = useState(false);
+  return (
+    <span
+      className={cx('communityNavItem', open && 'open')}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={t.navCommunity}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <WeChatIcon />
+        {t.navCommunity}
+      </button>
+      <span className="communityPopover" role="dialog" aria-label={t.navCommunity}>
+        <img src={wechatCommunityImage} alt={t.communityQrAlt} loading="lazy" />
+      </span>
+    </span>
+  );
+}
+
 function authErrorMessage(error, language) {
   const t = copy[language];
   const message = String(error?.message || error || '').trim();
@@ -967,6 +1134,7 @@ function AuthModal({ open, language, onClose }) {
   const t = copy[language];
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
+  useBodyScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
@@ -1031,7 +1199,7 @@ function AuthModal({ open, language, onClose }) {
   );
 }
 
-function UserMenu({ language, session, profile, onSignIn, onSignOut, onAdmin, onBilling, onAccount }) {
+function UserMenu({ language, session, profile, onSignIn, onSignOut, onAdmin, onBilling, onAccount, onFavorites }) {
   const t = copy[language];
   const [open, setOpen] = useState(false);
   const ref = useDropdownDismiss(open, setOpen);
@@ -1113,6 +1281,18 @@ function UserMenu({ language, session, profile, onSignIn, onSignOut, onAdmin, on
             role="menuitem"
             onClick={() => {
               setOpen(false);
+              onFavorites();
+            }}
+          >
+            <Heart size={17} />
+            {t.myFavorites}
+          </button>
+          <button
+            className="dropdownAction"
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
               onBilling();
             }}
           >
@@ -1157,6 +1337,8 @@ function AccountPanel({
   session,
   profile,
   casesById,
+  favoriteRows,
+  initialSection,
   onClose,
   onBilling,
   onProfileChange,
@@ -1166,6 +1348,8 @@ function AccountPanel({
   const [fullName, setFullName] = useState('');
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
+  const favoritesRef = useRef(null);
+  useBodyScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
@@ -1174,6 +1358,14 @@ function AccountPanel({
     setMessage('');
   }, [open, profile?.fullName, session?.user?.user_metadata?.name]);
 
+  useEffect(() => {
+    if (!open || initialSection !== 'favorites') return;
+    const frame = window.requestAnimationFrame(() => {
+      favoritesRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, initialSection, favoriteRows]);
+
   if (!open) return null;
 
   const email = profile?.email || session?.user?.email || '';
@@ -1181,6 +1373,12 @@ function AccountPanel({
   const usage = profile?.usage || {};
   const recentTransactions = profile?.recentTransactions || [];
   const generationTransactions = recentTransactions.filter((transaction) => transaction.type === 'generation');
+  const favoriteCases = normalizeFavoriteRows(favoriteRows)
+    .map((favorite) => ({
+      ...favorite,
+      caseItem: casesById?.get(favorite.caseId)
+    }))
+    .filter((favorite) => favorite.caseItem);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -1294,6 +1492,36 @@ function AccountPanel({
           </section>
         </div>
 
+        <section className="transactionSection favoritesSection" ref={favoritesRef}>
+          <h3>
+            <Heart size={18} />
+            {t.myFavorites}
+          </h3>
+          {favoriteCases.length ? (
+            <div className="favoriteGrid">
+              {favoriteCases.map(({ caseId, createdAt, caseItem }) => (
+                <button
+                  className="favoriteCard"
+                  type="button"
+                  onClick={() => onOpenCase?.(caseItem)}
+                  key={caseId}
+                >
+                  <img src={caseItem.image} alt={caseItem.imageAlt} />
+                  <span>#{caseId}</span>
+                  <strong>{caseItem.title}</strong>
+                  <em>
+                    {createdAt
+                      ? new Date(createdAt).toLocaleDateString(language === 'zh' ? 'zh-CN' : 'en-US')
+                      : localizeLabel(caseItem.category, language, null)}
+                  </em>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="emptyTransactions">{t.noFavorites}</p>
+          )}
+        </section>
+
         <section className="transactionSection accountTransactions">
           <h3>
             <ReceiptText size={18} />
@@ -1333,22 +1561,138 @@ function AdminMetricCard({ icon, label, value, hint }) {
   );
 }
 
-function AdminMiniBars({ rows, language }) {
-  const maxViews = Math.max(...rows.map((row) => Number(row.pageViews || 0)), 0);
-  const maxUsers = Math.max(...rows.map((row) => Number(row.activeUsers || 0)), 0);
+function AdminTrendChart({ rows = [], series = [], language, emptyLabel }) {
+  const chartRef = useRef(null);
+  const [hoverIndex, setHoverIndex] = useState(null);
+  const width = 720;
+  const height = 260;
+  const padding = { top: 24, right: 24, bottom: 38, left: 54 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const maxValue = Math.max(
+    1,
+    ...rows.flatMap((row) => series.map((item) => Number(row[item.key] || 0)))
+  );
+
+  function pointFor(row, index, key) {
+    const x = padding.left + (rows.length <= 1 ? chartWidth / 2 : (index / (rows.length - 1)) * chartWidth);
+    const y = padding.top + chartHeight - (Number(row[key] || 0) / maxValue) * chartHeight;
+    return { x, y };
+  }
+
+  function linePath(points) {
+    return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' ');
+  }
+
+  function areaPath(points) {
+    if (!points.length) return '';
+    const bottom = padding.top + chartHeight;
+    const lastPoint = points[points.length - 1];
+    return `${linePath(points)} L ${lastPoint.x.toFixed(2)} ${bottom} L ${points[0].x.toFixed(2)} ${bottom} Z`;
+  }
+
+  function handlePointerMove(event) {
+    if (!chartRef.current || !rows.length) return;
+    const clientX = event.touches?.[0]?.clientX ?? event.clientX;
+    const rect = chartRef.current.getBoundingClientRect();
+    const relativeX = ((clientX - rect.left) / rect.width) * width;
+    const ratio = Math.min(1, Math.max(0, (relativeX - padding.left) / chartWidth));
+    setHoverIndex(Math.round(ratio * (rows.length - 1)));
+  }
+
+  if (!rows.length) {
+    return <p className="emptyTransactions">{emptyLabel}</p>;
+  }
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1];
+  const xLabelIndexes = rows.length <= 8
+    ? rows.map((_, index) => index)
+    : [0, Math.round((rows.length - 1) / 2), rows.length - 1];
+  const activeIndex = hoverIndex ?? rows.length - 1;
+  const activeRow = rows[activeIndex];
+  const activeX = pointFor(activeRow, activeIndex, series[0]?.key).x;
+  const tooltipX = Math.min(activeX + 12, width - 178);
 
   return (
-    <div className="adminMiniBars">
-      {rows.map((row) => (
-        <div className="adminMiniBar" key={row.date}>
-          <span>{formatShortDate(row.date, language)}</span>
-          <div>
-            <i style={{ width: `${percentOf(row.pageViews, maxViews)}%` }} />
-            <b style={{ width: `${percentOf(row.activeUsers, maxUsers)}%` }} />
-          </div>
-          <strong>{formatNumber(row.pageViews)}</strong>
-        </div>
-      ))}
+    <div className="adminTrendChart">
+      <div className="adminChartLegend">
+        {series.map((item) => (
+          <span key={item.key}>
+            <i style={{ background: item.color }} />
+            {item.label}
+          </span>
+        ))}
+      </div>
+      <svg
+        ref={chartRef}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={series.map((item) => item.label).join(', ')}
+        onMouseMove={handlePointerMove}
+        onMouseLeave={() => setHoverIndex(null)}
+        onTouchMove={handlePointerMove}
+        onTouchEnd={() => setHoverIndex(null)}
+      >
+        <defs>
+          {series.filter((item) => item.area).map((item) => (
+            <linearGradient id={`area-${item.key}`} key={item.key} x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor={item.color} stopOpacity="0.38" />
+              <stop offset="100%" stopColor={item.color} stopOpacity="0.02" />
+            </linearGradient>
+          ))}
+        </defs>
+        {gridLines.map((line) => {
+          const y = padding.top + chartHeight * line;
+          return (
+            <g key={line}>
+              <line x1={padding.left} x2={width - padding.right} y1={y} y2={y} />
+              <text x={padding.left - 10} y={y + 4} textAnchor="end">
+                {formatNumber(Math.round(maxValue * (1 - line)))}
+              </text>
+            </g>
+          );
+        })}
+        {xLabelIndexes.map((index) => {
+          const point = pointFor(rows[index], index, series[0]?.key);
+          return (
+            <text className="adminChartDate" key={`${rows[index].date}-${index}`} x={point.x} y={height - 10} textAnchor="middle">
+              {formatShortDate(rows[index].date, language)}
+            </text>
+          );
+        })}
+        {series.map((item) => {
+          const points = rows.map((row, index) => pointFor(row, index, item.key));
+          return (
+            <g key={item.key}>
+              {item.area ? <path className="adminChartArea" d={areaPath(points)} fill={`url(#area-${item.key})`} /> : null}
+              <path
+                className="adminChartLine"
+                d={linePath(points)}
+                stroke={item.color}
+                strokeDasharray={item.dashed ? '8 7' : undefined}
+              />
+            </g>
+          );
+        })}
+        {activeRow ? (
+          <g className="adminChartActive">
+            <line x1={activeX} x2={activeX} y1={padding.top} y2={padding.top + chartHeight} />
+            {series.map((item) => {
+              const point = pointFor(activeRow, activeIndex, item.key);
+              return <circle key={item.key} cx={point.x} cy={point.y} r="4.5" fill={item.color} />;
+            })}
+            <g className="adminChartTooltip" transform={`translate(${tooltipX} 34)`}>
+              <rect width="164" height={38 + series.length * 18} rx="8" />
+              <text x="12" y="22">{formatRangeDate(activeRow.date, language)}</text>
+              {series.map((item, index) => (
+                <text key={item.key} x="12" y={44 + index * 18}>
+                  {item.label}: {formatNumber(activeRow[item.key])}
+                </text>
+              ))}
+            </g>
+          </g>
+        ) : null}
+      </svg>
     </div>
   );
 }
@@ -1383,12 +1727,15 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
   const [users, setUsers] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [range, setRange] = useState('7d');
+  const [customStart, setCustomStart] = useState(() => dateInputValue(29));
+  const [customEnd, setCustomEnd] = useState(() => dateInputValue());
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
   const [adjustment, setAdjustment] = useState(null);
   const [adjustStatus, setAdjustStatus] = useState('idle');
+  useBodyScrollLock(open);
 
-  async function loadAdminData(nextRange = range) {
+  async function loadAdminData(nextRange = range, nextStart = customStart, nextEnd = customEnd) {
     if (!session?.access_token) {
       setStatus('error');
       setMessage(t.adminOnly);
@@ -1399,9 +1746,14 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
     setMessage('');
     try {
       const headers = getAuthHeaders(session);
+      const params = new URLSearchParams({ range: nextRange });
+      if (nextRange === 'custom') {
+        params.set('start', nextStart);
+        params.set('end', nextEnd);
+      }
       const [usersResponse, metricsResponse] = await Promise.all([
         fetch('/api/admin/users', { headers }),
-        fetch(`/api/admin/metrics?range=${encodeURIComponent(nextRange)}`, { headers })
+        fetch(`/api/admin/metrics?${params.toString()}`, { headers })
       ]);
       const usersPayload = await usersResponse.json().catch(() => ({}));
       const metricsPayload = await metricsResponse.json().catch(() => ({}));
@@ -1416,8 +1768,22 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
       setStatus('ready');
     } catch (error) {
       setStatus('error');
-      setMessage(error.message === 'SERVER_NOT_CONFIGURED' ? t.checkoutUnavailable : generationErrorMessage(error.message, language));
+      setMessage(
+        error.message === 'SERVER_NOT_CONFIGURED'
+          ? t.checkoutUnavailable
+          : error.message === 'INVALID_DATE_RANGE'
+            ? t.invalidDateRange
+            : generationErrorMessage(error.message, language)
+      );
     }
+  }
+
+  function handleCustomApply() {
+    if (range !== 'custom') {
+      setRange('custom');
+      return;
+    }
+    loadAdminData('custom', customStart, customEnd);
   }
 
   async function handleAdjustCredits(event) {
@@ -1460,11 +1826,27 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
   const traffic = metrics?.traffic || {};
   const business = metrics?.business || {};
   const trafficTotals = traffic.totals || {};
+  const businessTotals = business.totals || {};
+  const businessRange = business.range || {};
+  const selectedRange = metrics?.range;
+  const selectedRangeLabel = selectedRange?.startDate && selectedRange?.endDate
+    ? `${formatRangeDate(selectedRange.startDate, language)} - ${formatRangeDate(selectedRange.endDate, language)}`
+    : '';
   const analyticsMessage = !traffic.configured
     ? t.analyticsNotConfigured
     : traffic.error
       ? t.analyticsLoadFailed
       : '';
+  const trafficSeries = [
+    { key: 'pv', label: t.pv, color: '#42e6ff', area: true },
+    { key: 'uv', label: t.uv, color: '#c7ff65' },
+    { key: 'visits', label: t.visits, color: '#ff8f70', dashed: true }
+  ];
+  const businessSeries = [
+    { key: 'generations', label: t.rangeGenerations, color: '#42e6ff', area: true },
+    { key: 'registrations', label: t.registrations, color: '#c7ff65' },
+    { key: 'creditsConsumed', label: t.creditsConsumed, color: '#ff8f70', dashed: true }
+  ];
 
   return (
     <div
@@ -1490,8 +1872,11 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
           <div className="adminHeaderActions">
             <div className="adminRangeToggle" role="group" aria-label={t.adminMetrics}>
               {[
+                ['today', t.rangeToday],
                 ['7d', t.range7d],
-                ['30d', t.range30d]
+                ['30d', t.range30d],
+                ['90d', t.range90d],
+                ['custom', t.customRange]
               ].map(([value, label]) => (
                 <button
                   className={cx(range === value && 'active')}
@@ -1503,6 +1888,21 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
                 </button>
               ))}
             </div>
+            {range === 'custom' ? (
+              <div className="adminCustomRange">
+                <label>
+                  <span>{t.startDate}</span>
+                  <input type="date" value={customStart} onChange={(event) => setCustomStart(event.target.value)} />
+                </label>
+                <label>
+                  <span>{t.endDate}</span>
+                  <input type="date" value={customEnd} onChange={(event) => setCustomEnd(event.target.value)} />
+                </label>
+                <button type="button" onClick={handleCustomApply} disabled={status === 'loading'}>
+                  {t.applyRange}
+                </button>
+              </div>
+            ) : null}
             <button type="button" onClick={() => loadAdminData()} disabled={status === 'loading'}>
               {status === 'loading' ? <LoaderCircle className="spinIcon" size={17} /> : <RefreshCw size={17} />}
               {t.refresh}
@@ -1518,21 +1918,28 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
                 {t.trafficMetrics}
               </h3>
               {analyticsMessage ? <p className="adminNotice">{analyticsMessage}</p> : null}
+              {selectedRangeLabel ? (
+                <p className="adminRangeSummary">
+                  {t.selectedRange}: <strong>{selectedRangeLabel}</strong>
+                </p>
+              ) : null}
               <div className="adminMetricGrid">
-                <AdminMetricCard icon={<BarChart3 size={18} />} label={t.pv} value={trafficTotals.pageViews} />
-                <AdminMetricCard icon={<Users size={18} />} label={t.uv} value={trafficTotals.activeUsers} />
-                <AdminMetricCard icon={<ReceiptText size={18} />} label={t.sessions} value={trafficTotals.sessions} />
+                <AdminMetricCard icon={<BarChart3 size={18} />} label={t.pv} value={firstNumber(trafficTotals.pv, trafficTotals.pageViews)} />
+                <AdminMetricCard icon={<Users size={18} />} label={t.uv} value={firstNumber(trafficTotals.uv, trafficTotals.activeUsers)} />
+                <AdminMetricCard icon={<ReceiptText size={18} />} label={t.visits} value={firstNumber(trafficTotals.visits, trafficTotals.sessions)} />
                 <AdminMetricCard icon={<UserPlus size={18} />} label={t.newUsers} value={trafficTotals.newUsers} />
               </div>
-              <div className="adminTrafficGrid">
-                <div className="adminPanelCard wide">
-                  <h4>{t.dailyTraffic}</h4>
-                  {traffic.daily?.length ? (
-                    <AdminMiniBars rows={traffic.daily} language={language} />
+              <div className="adminChartGrid">
+                <div className="adminPanelCard chart">
+                  <h4>{t.trafficTrend}</h4>
+                  {traffic.configured && traffic.daily?.length ? (
+                    <AdminTrendChart rows={traffic.daily} series={trafficSeries} language={language} emptyLabel={t.noAnalyticsRows} />
                   ) : (
                     <p className="emptyTransactions">{t.noAnalyticsRows}</p>
                   )}
                 </div>
+              </div>
+              <div className="adminTrafficGrid">
                 <div className="adminPanelCard">
                   <h4>{t.topPages}</h4>
                   <AdminRankList rows={traffic.topPages || []} type="pages" language={language} />
@@ -1554,16 +1961,26 @@ function AdminPanel({ open, language, session, casesById, onClose, onOpenCase })
                 {t.businessMetrics}
               </h3>
               <div className="adminMetricGrid">
-                <AdminMetricCard icon={<Users size={18} />} label={t.registeredUsers} value={business.totalUsers} hint={`${t.newRegistrations}: ${formatNumber(business.rangeUsers)}`} />
-                <AdminMetricCard icon={<Crown size={18} />} label={t.activeMemberships} value={business.activeMemberships} />
-                <AdminMetricCard icon={<ImageIcon size={18} />} label={t.totalGenerationsMetric} value={business.totalGenerations} hint={`${t.rangeGenerations}: ${formatNumber(business.rangeGenerations)}`} />
-                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsConsumed} value={business.totalGenerationCredits} hint={`${t.rangeGenerations}: ${formatNumber(business.rangeGenerationCredits)}`} />
-                <AdminMetricCard icon={<PackageCheck size={18} />} label={t.succeeded} value={business.succeededGenerations} />
-                <AdminMetricCard icon={<X size={18} />} label={t.failed} value={business.failedGenerations} />
-                <AdminMetricCard icon={<LoaderCircle size={18} />} label={t.pending} value={business.pendingGenerations} />
-                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsInCirculation} value={business.totalCreditBalance} />
-                <AdminMetricCard icon={<CreditCard size={18} />} label={t.purchasedCredits} value={business.purchasedCredits} />
-                <AdminMetricCard icon={<Crown size={18} />} label={t.membershipCredits} value={business.membershipCredits} />
+                <AdminMetricCard icon={<Users size={18} />} label={t.registeredUsers} value={firstNumber(businessTotals.registeredUsers, business.totalUsers)} hint={`${t.newRegistrations}: ${formatNumber(firstNumber(businessRange.newRegistrations, business.rangeUsers))}`} />
+                <AdminMetricCard icon={<Crown size={18} />} label={t.activeMemberships} value={firstNumber(businessTotals.activeMembers, business.activeMemberships)} hint={`${t.newMembers}: ${formatNumber(firstNumber(businessRange.newMembers, business.rangeMemberships))}`} />
+                <AdminMetricCard icon={<ImageIcon size={18} />} label={t.totalGenerationsMetric} value={firstNumber(businessTotals.totalGenerations, business.totalGenerations)} hint={`${t.rangeGenerations}: ${formatNumber(firstNumber(businessRange.generations, business.rangeGenerations))}`} />
+                <AdminMetricCard icon={<PackageCheck size={18} />} label={t.succeeded} value={firstNumber(businessTotals.succeededGenerations, business.succeededGenerations)} hint={`${t.rangeGenerations}: ${formatNumber(firstNumber(businessRange.succeededGenerations, business.rangeSucceededGenerations))}`} />
+                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsConsumed} value={firstNumber(businessTotals.totalCreditsConsumed, business.totalGenerationCredits)} hint={`${t.rangeGenerations}: ${formatNumber(firstNumber(businessRange.creditsConsumed, business.rangeGenerationCredits))}`} />
+                <AdminMetricCard icon={<X size={18} />} label={t.failed} value={firstNumber(businessTotals.failedGenerations, business.failedGenerations)} />
+                <AdminMetricCard icon={<LoaderCircle size={18} />} label={t.pending} value={firstNumber(businessTotals.pendingGenerations, business.pendingGenerations)} />
+                <AdminMetricCard icon={<Coins size={18} />} label={t.creditsInCirculation} value={firstNumber(businessTotals.totalCreditBalance, business.totalCreditBalance)} />
+                <AdminMetricCard icon={<CreditCard size={18} />} label={t.purchasedCredits} value={firstNumber(businessTotals.purchasedCredits, business.purchasedCredits)} />
+                <AdminMetricCard icon={<Crown size={18} />} label={t.membershipCredits} value={firstNumber(businessTotals.membershipCredits, business.membershipCredits)} />
+              </div>
+              <div className="adminChartGrid">
+                <div className="adminPanelCard chart">
+                  <h4>{t.businessTrend}</h4>
+                  {business.daily?.length ? (
+                    <AdminTrendChart rows={business.daily} series={businessSeries} language={language} emptyLabel={t.noAnalyticsRows} />
+                  ) : (
+                    <p className="emptyTransactions">{t.noAnalyticsRows}</p>
+                  )}
+                </div>
               </div>
             </section>
           </div>
@@ -1717,6 +2134,7 @@ function BillingPanel({
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
   const [busyProduct, setBusyProduct] = useState('');
+  useBodyScrollLock(open);
 
   async function loadBilling() {
     setStatus('loading');
@@ -2112,7 +2530,18 @@ function TemplateSection({ language, styleLibrary, onOpenTemplate }) {
   );
 }
 
-function PromptCard({ caseItem, copied, language, onCopy, onOpen, onGenerate, styleLibrary }) {
+function PromptCard({
+  caseItem,
+  copied,
+  favorited,
+  favoriteBusy,
+  language,
+  onCopy,
+  onOpen,
+  onGenerate,
+  onToggleFavorite,
+  styleLibrary
+}) {
   const t = copy[language];
   const tags = [...new Set([...caseItem.styles, ...caseItem.scenes])].slice(0, 4);
 
@@ -2145,6 +2574,16 @@ function PromptCard({ caseItem, copied, language, onCopy, onOpen, onGenerate, st
           ))}
         </div>
         <div className="cardActions caseActions">
+          <button
+            className={cx('favoriteAction', favorited && 'active')}
+            type="button"
+            onClick={() => onToggleFavorite(caseItem)}
+            disabled={favoriteBusy}
+            aria-pressed={Boolean(favorited)}
+          >
+            {favoriteBusy ? <LoaderCircle className="spinIcon" size={17} /> : <Heart size={17} />}
+            {favorited ? t.favorited : t.favorite}
+          </button>
           <button type="button" onClick={() => onCopy(caseItem)}>
             {copied ? <Check size={17} /> : <Copy size={17} />}
             {copied ? t.copied : t.copyPrompt}
@@ -2159,6 +2598,7 @@ function PromptCard({ caseItem, copied, language, onCopy, onOpen, onGenerate, st
           </button>
           <a href={caseItem.githubUrl} target="_blank" rel="noreferrer" aria-label={t.openOnGithub}>
             <Github size={18} />
+            GitHub
           </a>
         </div>
       </div>
@@ -2173,8 +2613,11 @@ function PreviewDialog({
   copiedId,
   session,
   profile,
+  favorite,
+  favoriteBusy,
   onClose,
   onCopyText,
+  onToggleFavorite,
   onAuthRequired,
   onBillingRequired,
   onProfileChange
@@ -2187,12 +2630,10 @@ function PreviewDialog({
     image: '',
     message: ''
   });
+  useBodyScrollLock(Boolean(preview));
 
   useEffect(() => {
     if (!preview) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event) {
       if (event.key === 'Escape') onClose();
@@ -2200,7 +2641,6 @@ function PreviewDialog({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [preview, onClose]);
@@ -2372,6 +2812,18 @@ function PreviewDialog({
             </div>
           ) : null}
           <div className="previewActions">
+            {!isTemplate ? (
+              <button
+                className={cx('favoriteAction', favorite && 'active')}
+                type="button"
+                onClick={() => onToggleFavorite(item)}
+                disabled={favoriteBusy}
+                aria-pressed={Boolean(favorite)}
+              >
+                {favoriteBusy ? <LoaderCircle className="spinIcon" size={17} /> : <Heart size={17} />}
+                {favorite ? t.unfavorite : t.favorite}
+              </button>
+            ) : null}
             <button type="button" onClick={() => onCopyText(promptText, copyId)}>
               {isCopied ? <Check size={17} /> : <Copy size={17} />}
               {isCopied ? t.copied : isTemplate ? t.copyTemplatePrompt : t.copyPrompt}
@@ -2486,8 +2938,12 @@ function App() {
   const [preview, setPreview] = useState(null);
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [favoriteRows, setFavoriteRows] = useState([]);
+  const [favoriteBusyId, setFavoriteBusyId] = useState(null);
+  const [favoriteMessage, setFavoriteMessage] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [accountInitialSection, setAccountInitialSection] = useState('overview');
   const [adminOpen, setAdminOpen] = useState(false);
   const [billingOpen, setBillingOpen] = useState(false);
   const [billingNotice, setBillingNotice] = useState('');
@@ -2540,6 +2996,7 @@ function App() {
 
     if (!session?.access_token) {
       setProfile(null);
+      setFavoriteRows([]);
       return () => {
         cancelled = true;
       };
@@ -2557,6 +3014,49 @@ function App() {
       .catch(() => {
         if (!cancelled) setProfile(null);
       });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.access_token]);
+
+  async function loadFavorites({ silent = true } = {}) {
+    if (!session?.access_token) {
+      setFavoriteRows([]);
+      return [];
+    }
+
+    try {
+      const response = await fetch('/api/favorites', {
+        headers: getAuthHeaders(session)
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.ok) {
+        throw new Error(payload.error || 'FAVORITES_LOAD_FAILED');
+      }
+      const favorites = normalizeFavoriteRows(payload.favorites);
+      setFavoriteRows(favorites);
+      return favorites;
+    } catch {
+      if (!silent) setTimedFavoriteMessage(t.favoriteFailed);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!session?.access_token) {
+      setFavoriteRows([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadFavorites().then((favorites) => {
+      if (cancelled) return;
+      setFavoriteRows(favorites);
+    });
 
     return () => {
       cancelled = true;
@@ -2636,11 +3136,16 @@ function App() {
 
   const visibleCases = filteredCases.slice(0, 72);
   const casesById = useMemo(() => new Map((siteData?.cases || []).map((caseItem) => [caseItem.id, caseItem])), [siteData]);
+  const favoriteCaseIds = useMemo(
+    () => new Set(normalizeFavoriteRows(favoriteRows).map((favorite) => favorite.caseId)),
+    [favoriteRows]
+  );
 
   async function handleSignOut() {
     if (supabase) await supabase.auth.signOut();
     setSession(null);
     setProfile(null);
+    setFavoriteRows([]);
     setAccountOpen(false);
     setAdminOpen(false);
     setBillingOpen(false);
@@ -2652,6 +3157,7 @@ function App() {
 
   function handleOpenCaseFromAccount(caseItem) {
     setAccountOpen(false);
+    setAccountInitialSection('overview');
     setBillingOpen(false);
     setPreview({ type: 'case', item: caseItem });
   }
@@ -2659,6 +3165,82 @@ function App() {
   function handleOpenCaseFromAdmin(caseItem) {
     setAdminOpen(false);
     setPreview({ type: 'case', item: caseItem });
+  }
+
+  function setTimedFavoriteMessage(message) {
+    setFavoriteMessage(message);
+    window.setTimeout(() => {
+      setFavoriteMessage((current) => (current === message ? '' : current));
+    }, 2400);
+  }
+
+  async function handleToggleFavorite(caseItem) {
+    if (!caseItem?.id) return;
+    if (!session?.access_token) {
+      setAuthOpen(true);
+      setTimedFavoriteMessage(t.signInToFavorite);
+      return;
+    }
+
+    const caseId = Number(caseItem.id);
+    const isFavorite = favoriteCaseIds.has(caseId);
+    const previousRows = favoriteRows;
+    setFavoriteBusyId(caseId);
+
+    if (isFavorite) {
+      setFavoriteRows((current) => normalizeFavoriteRows(current).filter((favorite) => favorite.caseId !== caseId));
+    } else {
+      setFavoriteRows((current) => [
+        { caseId, createdAt: new Date().toISOString() },
+        ...normalizeFavoriteRows(current).filter((favorite) => favorite.caseId !== caseId)
+      ]);
+    }
+
+    try {
+      const response = await fetch(isFavorite ? `/api/favorites?caseId=${caseId}` : '/api/favorites', {
+        method: isFavorite ? 'DELETE' : 'POST',
+        headers: {
+          ...(isFavorite ? {} : { 'Content-Type': 'application/json' }),
+          ...getAuthHeaders(session)
+        },
+        body: isFavorite ? undefined : JSON.stringify({ caseId })
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.ok) {
+        if (payload.error === 'AUTH_REQUIRED' || payload.loginRequired) setAuthOpen(true);
+        throw new Error(payload.error || 'FAVORITE_FAILED');
+      }
+
+      if (!isFavorite && payload.favorite) {
+        const favorite = normalizeFavoriteRows([payload.favorite])[0];
+        if (favorite) {
+          setFavoriteRows((current) => [
+            favorite,
+            ...normalizeFavoriteRows(current).filter((item) => item.caseId !== caseId)
+          ]);
+        }
+      }
+      setTimedFavoriteMessage(isFavorite ? t.favoriteRemoved : t.favoriteSaved);
+    } catch {
+      setFavoriteRows(previousRows);
+      setTimedFavoriteMessage(t.favoriteFailed);
+    } finally {
+      setFavoriteBusyId(null);
+    }
+  }
+
+  function handleOpenAccount(section = 'overview') {
+    setAccountInitialSection(section);
+    setAccountOpen(true);
+    if (section === 'favorites') {
+      loadFavorites({ silent: false });
+    }
+  }
+
+  function handleCloseAccount() {
+    setAccountOpen(false);
+    setAccountInitialSection('overview');
   }
 
   if (!siteData || !styleLibrary) {
@@ -2684,6 +3266,7 @@ function App() {
             <a href="#gallery">{t.navCases}</a>
             <a href="#templates">{t.navTemplates}</a>
             <a href="#agent-skill">{t.navSkill}</a>
+            <CommunityNavItem language={language} />
             <a href={repoUrl} target="_blank" rel="noreferrer">
               GitHub
             </a>
@@ -2695,7 +3278,8 @@ function App() {
             profile={profile}
             onSignIn={() => setAuthOpen(true)}
             onSignOut={handleSignOut}
-            onAccount={() => setAccountOpen(true)}
+            onAccount={() => handleOpenAccount('overview')}
+            onFavorites={() => handleOpenAccount('favorites')}
             onAdmin={() => setAdminOpen(true)}
             onBilling={() => {
               setBillingNotice('');
@@ -2704,6 +3288,7 @@ function App() {
           />
         </div>
       </header>
+      {favoriteMessage ? <div className="toastNotice">{favoriteMessage}</div> : null}
 
       <Hero
         latestCases={heroCases}
@@ -2793,6 +3378,8 @@ function App() {
             <PromptCard
               caseItem={caseItem}
               copied={copiedId === `case-${caseItem.id}`}
+              favorited={favoriteCaseIds.has(caseItem.id)}
+              favoriteBusy={favoriteBusyId === caseItem.id}
               language={language}
               onCopy={copyPrompt}
               onOpen={(item) => setPreview({ type: 'case', item })}
@@ -2800,6 +3387,7 @@ function App() {
                 setPreview({ type: 'case', item });
                 if (!session?.access_token) setAuthOpen(true);
               }}
+              onToggleFavorite={handleToggleFavorite}
               styleLibrary={styleLibrary}
               key={caseItem.id}
             />
@@ -2827,8 +3415,11 @@ function App() {
         copiedId={copiedId}
         session={session}
         profile={profile}
+        favorite={preview?.type === 'case' ? favoriteCaseIds.has(preview.item.id) : false}
+        favoriteBusy={preview?.type === 'case' && favoriteBusyId === preview.item.id}
         onClose={() => setPreview(null)}
         onCopyText={copyText}
+        onToggleFavorite={handleToggleFavorite}
         onAuthRequired={() => setAuthOpen(true)}
         onBillingRequired={() => {
           setBillingNotice(t.creditsRequired);
@@ -2847,7 +3438,9 @@ function App() {
         session={session}
         profile={profile}
         casesById={casesById}
-        onClose={() => setAccountOpen(false)}
+        favoriteRows={favoriteRows}
+        initialSection={accountInitialSection}
+        onClose={handleCloseAccount}
         onProfileChange={handleProfileChange}
         onOpenCase={handleOpenCaseFromAccount}
         onBilling={() => {

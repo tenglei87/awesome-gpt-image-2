@@ -68,6 +68,14 @@ function rowDimension(row, name) {
   return row.dimensionValues?.[index]?.value || '';
 }
 
+function normalizeGaDate(value) {
+  const text = String(value || '');
+  if (/^\d{8}$/.test(text)) {
+    return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
+  }
+  return text;
+}
+
 function normalizeRows(response) {
   const headers = {
     metricHeaders: response.metricHeaders || [],
@@ -115,7 +123,21 @@ async function runReport(request) {
   return response;
 }
 
-export async function getGa4Traffic(rangeDays) {
+function normalizeDateRange(input) {
+  if (typeof input === 'number') {
+    return {
+      startDate: `${input}daysAgo`,
+      endDate: 'today'
+    };
+  }
+
+  return {
+    startDate: input?.startDate || '7daysAgo',
+    endDate: input?.endDate || 'today'
+  };
+}
+
+export async function getGa4Traffic(rangeInput) {
   if (!isGa4Configured()) {
     return {
       configured: false,
@@ -127,10 +149,7 @@ export async function getGa4Traffic(rangeDays) {
     };
   }
 
-  const dateRange = {
-    startDate: `${rangeDays}daysAgo`,
-    endDate: 'today'
-  };
+  const dateRange = normalizeDateRange(rangeInput);
 
   const [totalsReport, dailyReport, pageReport, channelReport, countryReport] = await Promise.all([
     runReport({
@@ -186,41 +205,55 @@ export async function getGa4Traffic(rangeDays) {
   ]);
 
   const daily = normalizeRows(dailyReport).map((row) => ({
-    date: rowDimension(row, 'date'),
-    activeUsers: rowMetric(row, 'activeUsers'),
-    pageViews: rowMetric(row, 'screenPageViews'),
-    sessions: rowMetric(row, 'sessions'),
+    date: normalizeGaDate(rowDimension(row, 'date')),
+    uv: rowMetric(row, 'activeUsers'),
+    pv: rowMetric(row, 'screenPageViews'),
+    visits: rowMetric(row, 'sessions'),
     newUsers: rowMetric(row, 'newUsers')
+  })).map((row) => ({
+    ...row,
+    activeUsers: row.uv,
+    pageViews: row.pv,
+    sessions: row.visits
   }));
 
   const totalsRow = normalizeRows(totalsReport)[0];
   const totals = totalsRow
     ? {
-        activeUsers: rowMetric(totalsRow, 'activeUsers'),
-        pageViews: rowMetric(totalsRow, 'screenPageViews'),
-        sessions: rowMetric(totalsRow, 'sessions'),
+        uv: rowMetric(totalsRow, 'activeUsers'),
+        pv: rowMetric(totalsRow, 'screenPageViews'),
+        visits: rowMetric(totalsRow, 'sessions'),
         newUsers: rowMetric(totalsRow, 'newUsers')
       }
-    : { activeUsers: 0, pageViews: 0, sessions: 0, newUsers: 0 };
+    : { uv: 0, pv: 0, visits: 0, newUsers: 0 };
 
   return {
     configured: true,
-    totals,
+    totals: {
+      ...totals,
+      activeUsers: totals.uv,
+      pageViews: totals.pv,
+      sessions: totals.visits
+    },
     daily,
     topPages: normalizeRows(pageReport).map((row) => ({
       page: rowDimension(row, 'pagePathPlusQueryString') || '/',
       pageViews: rowMetric(row, 'screenPageViews'),
+      pv: rowMetric(row, 'screenPageViews'),
       activeUsers: rowMetric(row, 'activeUsers')
     })),
     channels: normalizeRows(channelReport).map((row) => ({
       channel: rowDimension(row, 'sessionDefaultChannelGroup') || 'Unassigned',
       sessions: rowMetric(row, 'sessions'),
+      visits: rowMetric(row, 'sessions'),
       activeUsers: rowMetric(row, 'activeUsers')
     })),
     countries: normalizeRows(countryReport).map((row) => ({
       country: rowDimension(row, 'country') || 'Unknown',
       activeUsers: rowMetric(row, 'activeUsers'),
-      pageViews: rowMetric(row, 'screenPageViews')
+      uv: rowMetric(row, 'activeUsers'),
+      pageViews: rowMetric(row, 'screenPageViews'),
+      pv: rowMetric(row, 'screenPageViews')
     }))
   };
 }

@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/github/stars/freestylefly/awesome-gpt-image-2?style=flat-square&color=rgb(25%2C%20121%2C%20255)" alt="Stars"></a>
   <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/github/forks/freestylefly/awesome-gpt-image-2?style=flat-square&color=green" alt="Forks"></a>
-  <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/badge/Cases-427-blueviolet?style=flat-square" alt="Cases"></a>
+  <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/badge/Cases-476-blueviolet?style=flat-square" alt="Cases"></a>
   <a href="https://github.com/freestylefly/awesome-gpt-image-2"><img src="https://img.shields.io/badge/100%25-Original_AI_Rewritten-green?style=flat-square" alt="Original"></a>
 </p>
 
@@ -15,6 +15,24 @@
 
 > Updated irregularly with new workflows. Stars are welcome.
 > This project is sponsored by [Ciyuan API](https://ciyuan.today/), an AI aggregation platform for cost-effective GPT Image 2 access.
+
+## 🌐 Visual Website
+
+Use the live site at [gpt-image2.canghe.ai](https://gpt-image2.canghe.ai/) to browse the gallery as a product experience: open large previews, copy full prompts, filter by style or scenario, test generation after Google sign-in, and jump back to the source case on GitHub.
+
+<p align="center">
+  <a href="https://gpt-image2.canghe.ai/">
+    <img src="data/images/site-preview.png" alt="GPT-Image2 Gallery website preview" width="900">
+  </a>
+</p>
+
+## WeChat Official Account
+
+Search **苍何** on WeChat or scan the QR card below. To join the GPT-Image2 community group, follow the account and reply with **gpt-image-2交流群**.
+
+<p align="center">
+  <img src="data/images/wechat-community.jpg" alt="Canghe WeChat community QR card" width="760">
+</p>
 
 <a name="section-vision"></a>
 
@@ -32,7 +50,7 @@ The core goal is simple: compress prose-style prompts into structured protocols.
 
 - [Full case gallery](docs/gallery.md)
 - [Gallery Part 1: cases 1-165](docs/gallery-part-1.md)
-- [Gallery Part 2: cases 166-427](docs/gallery-part-2.md)
+- [Gallery Part 2: cases 166-476](docs/gallery-part-2.md)
 - [Industrial prompt templates and pitfalls guide](docs/templates.md)
 - [Agent skill: GPT-Image2 Style Library](agents/skills/gpt-image-2-style-library/SKILL.md)
 - [MIT License](LICENSE)
@@ -47,19 +65,19 @@ Start with the case album to find a visual direction, then open the prompt templ
 <table>
   <tr>
     <td width="33%" valign="top" align="center">
-      <p><strong>🧩 UI & Interfaces</strong><br><sub>63 cases</sub></p>
+      <p><strong>🧩 UI & Interfaces</strong><br><sub>73 cases</sub></p>
       <a href="docs/gallery.md#cat-ui"><img src="data/images/category-covers/ui.jpg" alt="UI and interfaces" width="220"></a><br>
       <sub>Apps, websites, dashboards, social screenshots, and product interfaces.</sub><br>
       <a href="docs/gallery.md#cat-ui"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>📊 Charts & Infographics</strong><br><sub>45 cases</sub></p>
+      <p><strong>📊 Charts & Infographics</strong><br><sub>51 cases</sub></p>
       <a href="docs/gallery.md#cat-infographic"><img src="data/images/category-covers/infographic.jpg" alt="Charts and infographics" width="220"></a><br>
       <sub>Infographics, knowledge maps, technical explainers, and structured diagrams.</sub><br>
       <a href="docs/gallery.md#cat-infographic"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>📰 Posters & Typography</strong><br><sub>69 cases</sub></p>
+      <p><strong>📰 Posters & Typography</strong><br><sub>74 cases</sub></p>
       <a href="docs/gallery.md#cat-poster"><img src="data/images/category-covers/poster.jpg" alt="Posters and typography" width="220"></a><br>
       <sub>Event posters, covers, type-driven visuals, and strong layout compositions.</sub><br>
       <a href="docs/gallery.md#cat-poster"><strong>View Cases</strong></a>
@@ -67,19 +85,19 @@ Start with the case album to find a visual direction, then open the prompt templ
   </tr>
   <tr>
     <td width="33%" valign="top" align="center">
-      <p><strong>🛍️ Products & E-commerce</strong><br><sub>28 cases</sub></p>
+      <p><strong>🛍️ Products & E-commerce</strong><br><sub>37 cases</sub></p>
       <a href="docs/gallery.md#cat-product"><img src="data/images/category-covers/product.jpg" alt="Products and e-commerce" width="220"></a><br>
       <sub>Product shots, detail pages, packaging, selling points, and ads.</sub><br>
       <a href="docs/gallery.md#cat-product"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>🏷️ Brand & Logos</strong><br><sub>20 cases</sub></p>
+      <p><strong>🏷️ Brand & Logos</strong><br><sub>23 cases</sub></p>
       <a href="docs/gallery.md#cat-brand"><img src="data/images/category-covers/brand.jpg" alt="Brand and logos" width="220"></a><br>
       <sub>Logos, identity systems, brand touchpoints, and campaign visuals.</sub><br>
       <a href="docs/gallery.md#cat-brand"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>🏛️ Architecture & Spaces</strong><br><sub>10 cases</sub></p>
+      <p><strong>🏛️ Architecture & Spaces</strong><br><sub>11 cases</sub></p>
       <a href="docs/gallery.md#cat-architecture"><img src="data/images/category-covers/architecture.jpg" alt="Architecture and spaces" width="220"></a><br>
       <sub>Architecture renders, interiors, city maps, and spatial concepts.</sub><br>
       <a href="docs/gallery.md#cat-architecture"><strong>View Cases</strong></a>
@@ -87,19 +105,19 @@ Start with the case album to find a visual direction, then open the prompt templ
   </tr>
   <tr>
     <td width="33%" valign="top" align="center">
-      <p><strong>📷 Photography & Realism</strong><br><sub>51 cases</sub></p>
+      <p><strong>📷 Photography & Realism</strong><br><sub>62 cases</sub></p>
       <a href="docs/gallery.md#cat-photo"><img src="data/images/category-covers/photo.jpg" alt="Photography and realism" width="220"></a><br>
       <sub>Portraits, phone photography, film texture, and commercial photography.</sub><br>
       <a href="docs/gallery.md#cat-photo"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>🎨 Illustration & Art</strong><br><sub>39 cases</sub></p>
+      <p><strong>🎨 Illustration & Art</strong><br><sub>49 cases</sub></p>
       <a href="docs/gallery.md#cat-illustration"><img src="data/images/category-covers/illustration.jpg" alt="Illustration and art" width="220"></a><br>
       <sub>Illustration, art styles, material experiments, and decorative images.</sub><br>
       <a href="docs/gallery.md#cat-illustration"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>🧍 Characters & People</strong><br><sub>20 cases</sub></p>
+      <p><strong>🧍 Characters & People</strong><br><sub>22 cases</sub></p>
       <a href="docs/gallery.md#cat-character"><img src="data/images/category-covers/character.jpg" alt="Characters and people" width="220"></a><br>
       <sub>Character design, pose references, cards, and 3D toys.</sub><br>
       <a href="docs/gallery.md#cat-character"><strong>View Cases</strong></a>
@@ -107,7 +125,7 @@ Start with the case album to find a visual direction, then open the prompt templ
   </tr>
   <tr>
     <td width="33%" valign="top" align="center">
-      <p><strong>🎬 Scenes & Storytelling</strong><br><sub>16 cases</sub></p>
+      <p><strong>🎬 Scenes & Storytelling</strong><br><sub>17 cases</sub></p>
       <a href="docs/gallery.md#cat-scene"><img src="data/images/category-covers/scene.jpg" alt="Scenes and storytelling" width="220"></a><br>
       <sub>Storyboards, narrative scenes, livestream frames, and worldbuilding.</sub><br>
       <a href="docs/gallery.md#cat-scene"><strong>View Cases</strong></a>
@@ -119,7 +137,7 @@ Start with the case album to find a visual direction, then open the prompt templ
       <a href="docs/gallery.md#cat-history"><strong>View Cases</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
-      <p><strong>📚 Documents & Publishing</strong><br><sub>9 cases</sub></p>
+      <p><strong>📚 Documents & Publishing</strong><br><sub>10 cases</sub></p>
       <a href="docs/gallery.md#cat-document"><img src="data/images/category-covers/document.jpg" alt="Documents and publishing" width="220"></a><br>
       <sub>White papers, manuals, encyclopedic plates, and publishing layouts.</sub><br>
       <a href="docs/gallery.md#cat-document"><strong>View Cases</strong></a>
@@ -127,7 +145,7 @@ Start with the case album to find a visual direction, then open the prompt templ
   </tr>
   <tr>
     <td width="33%" valign="top" align="center">
-      <p><strong>🧪 Other Use Cases</strong><br><sub>29 cases</sub></p>
+      <p><strong>🧪 Other Use Cases</strong><br><sub>28 cases</sub></p>
       <a href="docs/gallery.md#cat-other"><img src="data/images/category-covers/other.jpg" alt="Other use cases" width="220"></a><br>
       <sub>Creative experiments, special tasks, mixed workflows, and practical cases.</sub><br>
       <a href="docs/gallery.md#cat-other"><strong>View Cases</strong></a>
@@ -135,14 +153,14 @@ Start with the case album to find a visual direction, then open the prompt templ
     <td width="33%" valign="top" align="center">
       <h4>🖼️ Full Gallery</h4>
       <a href="docs/gallery.md"><img src="data/images/category-covers/gallery.jpg" alt="Full gallery" width="220"></a><br>
-      <sub>Browse all 427 cases by gallery part and category.</sub><br>
+      <sub>Browse all 476 cases by gallery part and category.</sub><br>
       <a href="docs/gallery.md"><strong>Open Gallery</strong></a>
     </td>
     <td width="33%" valign="top" align="center">
       <h4>⭐ Latest Additions</h4>
-      <a href="docs/gallery-part-2.md#case-427"><img src="data/images/case427.jpg" alt="Latest additions" width="220"></a><br>
+      <a href="docs/gallery-part-2.md#case-476"><img src="data/images/case476.jpg" alt="Latest additions" width="220"></a><br>
       <sub>The newest community cases and workflows collected in the repo.</sub><br>
-      <a href="docs/gallery-part-2.md#case-427"><strong>View Latest</strong></a>
+      <a href="docs/gallery-part-2.md#case-476"><strong>View Latest</strong></a>
     </td>
   </tr>
 </table>
@@ -300,6 +318,7 @@ Setup checklist:
 - Apply [`supabase/migrations/20260509090000_membership_billing.sql`](supabase/migrations/20260509090000_membership_billing.sql) to add membership plans, credit packs, Stripe order records, and credit adjustment RPCs.
 - Apply [`supabase/migrations/20260512090000_google_account_center.sql`](supabase/migrations/20260512090000_google_account_center.sql) to add account usage summaries and forced credit charging for super admins.
 - Apply [`supabase/migrations/20260512143000_pricing_admin_metrics.sql`](supabase/migrations/20260512143000_pricing_admin_metrics.sql) to update the `$5 / 300 credits` catalog and add admin dashboard metrics.
+- Apply [`supabase/migrations/20260515090000_case_favorites.sql`](supabase/migrations/20260515090000_case_favorites.sql) to add per-user case favorites.
 - Add `https://gpt-image2.canghe.ai` and local dev URLs such as `http://127.0.0.1:5173` to Supabase Auth redirect URLs.
 - Enable the Google Provider after adding Google OAuth credentials in the Supabase Dashboard.
 - To force Google-only sign-in, disable the Email Provider in Supabase Auth settings.
@@ -408,31 +427,37 @@ Only the latest collection and import run is shown here. Older imports stay in t
 
 <table>
   <tr>
-    <td width="50%" valign="top" align="center">
-      <p><strong>Case 424: FMCG Lollipop Billboard</strong></p>
-      <a href="docs/gallery-part-2.md#case-424"><img src="data/images/case424.jpg" alt="FMCG lollipop billboard" width="140"></a><br>
-      <sub>A cinematic candy billboard prompt with neon street lighting, flavor splash motion, and layered campaign typography.</sub><br>
-      <a href="docs/gallery-part-2.md#case-424"><strong>View Case</strong></a>
+    <td width="33%" valign="top" align="center">
+      <p><strong>Case 472: Shanghai Metro Platform Morning</strong></p>
+      <a href="docs/gallery-part-2.md#case-472"><img src="data/images/case472.jpg" alt="Shanghai metro platform morning" width="150"></a><br>
+      <sub>A realistic metro-platform prompt with motion blur, fluorescent light, skin texture, and a quiet public-space moment.</sub><br>
+      <a href="docs/gallery-part-2.md#case-472"><strong>View Case</strong></a>
     </td>
-    <td width="50%" valign="top" align="center">
-      <p><strong>Case 425: Black-and-White Portrait Collage</strong></p>
-      <a href="docs/gallery-part-2.md#case-425"><img src="data/images/case425.jpg" alt="Black-and-white portrait collage" width="140"></a><br>
-      <sub>A clean editorial portrait collage that mixes color cutout foreground with stacked monochrome frames.</sub><br>
-      <a href="docs/gallery-part-2.md#case-425"><strong>View Case</strong></a>
+    <td width="33%" valign="top" align="center">
+      <p><strong>Case 473: ROGUE VIPER Concept Sheet</strong></p>
+      <a href="docs/gallery-part-2.md#case-473"><img src="data/images/case473.jpg" alt="ROGUE VIPER game concept sheet" width="150"></a><br>
+      <sub>A four-panel AAA game concept sheet covering protagonist, enemy, environment, and action-set-piece references.</sub><br>
+      <a href="docs/gallery-part-2.md#case-473"><strong>View Case</strong></a>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <p><strong>Case 474: Minimal Travel Poster Series</strong></p>
+      <a href="docs/gallery-part-2.md#case-474"><img src="data/images/case474.jpg" alt="Minimal travel poster series" width="150"></a><br>
+      <sub>A clean flat travel poster series prompt with Scandinavian color, destination typography, and calm editorial scenery.</sub><br>
+      <a href="docs/gallery-part-2.md#case-474"><strong>View Case</strong></a>
     </td>
   </tr>
   <tr>
-    <td width="50%" valign="top" align="center">
-      <p><strong>Case 426: Japanese-Korean Cafe Date</strong></p>
-      <a href="docs/gallery-part-2.md#case-426"><img src="data/images/case426.jpg" alt="Japanese-Korean cafe date" width="140"></a><br>
-      <sub>A cozy cafe photography system with dessert styling, window light, doodles, and Tokyo/Seoul atmosphere variables.</sub><br>
-      <a href="docs/gallery-part-2.md#case-426"><strong>View Case</strong></a>
+    <td width="33%" valign="top" align="center">
+      <p><strong>Case 475: Packaging Structure Board</strong></p>
+      <a href="docs/gallery-part-2.md#case-475"><img src="data/images/case475.jpg" alt="Packaging structure board" width="150"></a><br>
+      <sub>An industrial packaging sheet prompt with hero render, technical views, fold lines, material notes, and color swatches.</sub><br>
+      <a href="docs/gallery-part-2.md#case-475"><strong>View Case</strong></a>
     </td>
-    <td width="50%" valign="top" align="center">
-      <p><strong>Case 427: 9-Frame Fashion Portrait Collage</strong></p>
-      <a href="docs/gallery-part-2.md#case-427"><img src="data/images/case427.jpg" alt="9-frame fashion portrait collage" width="140"></a><br>
-      <sub>A photobooth-style fashion collage with nine expressions, cap styling, studio lighting, and film borders.</sub><br>
-      <a href="docs/gallery-part-2.md#case-427"><strong>View Case</strong></a>
+    <td width="33%" valign="top" align="center">
+      <p><strong>Case 476: Good Morning Latte Miniature</strong></p>
+      <a href="docs/gallery-part-2.md#case-476"><img src="data/images/case476.jpg" alt="Good morning latte miniature" width="150"></a><br>
+      <sub>A soft 3D miniature scene combining latte foam lettering, ceramic texture, warm light, and cozy still-life detail.</sub><br>
+      <a href="docs/gallery-part-2.md#case-476"><strong>View Case</strong></a>
     </td>
   </tr>
 </table>
@@ -473,12 +498,6 @@ All prompt cases and generated images in this repository were initially inspired
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=freestylefly/awesome-gpt-image-2&type=Date)](https://star-history.com/#freestylefly/awesome-gpt-image-2&Date)
-
-## WeChat Official Account
-
-Search **苍何** on WeChat or scan the QR code below to follow Canghe's original WeChat official account. Reply with **AI** to get more AI prompt learning resources.
-
-![Canghe WeChat Official Account](data/images/公众号.png)
 
 ## 📜 License
 
